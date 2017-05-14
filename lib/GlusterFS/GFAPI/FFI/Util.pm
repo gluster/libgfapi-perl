@@ -15,7 +15,7 @@ use Carp;
 use Sub::Exporter
         -setup =>
         {
-            exports => [qw/libgfapi_soname/],
+            exports => [qw/libgfapi_soname valid_so/],
         };
 
 sub libgfapi_soname

@@ -39,6 +39,8 @@ WriteMakefile(
         'Time::HiRes'  => 0,
         'locale'       => 0,
         'utf8'         => 0,
+        'Data::Dumper' => 0,
+        'Devel::Peek'  => 0,
     },
     EXE_FILES => [],
     dist => {
