@@ -28,6 +28,126 @@ sub new
     bless(\%attrs, __PACKAGE__);
 }
 
+sub fileno
+{
+
+}
+
+sub mode
+{
+
+}
+
+sub name
+{
+
+}
+
+sub closed
+{
+
+}
+
+sub close
+{
+
+}
+
+sub discard
+{
+
+}
+
+sub dup
+{
+
+}
+
+sub fallocate
+{
+
+}
+
+sub fchmod
+{
+
+}
+
+sub fchown
+{
+
+}
+
+sub fdatasync
+{
+
+}
+
+sub fgetsize
+{
+
+}
+
+sub fgetxattr
+{
+
+}
+
+sub flistxattr
+{
+
+}
+
+sub fsetxattr
+{
+
+}
+
+sub fremovexattr
+{
+
+}
+
+sub fstat
+{
+
+}
+
+sub fsync
+{
+
+}
+
+sub ftruncate
+{
+
+}
+
+sub lseek
+{
+
+}
+
+sub read
+{
+
+}
+
+sub readinto
+{
+
+}
+
+sub write
+{
+
+}
+
+sub zerofill
+{
+
+}
+
 1;
 
 __END__

@@ -34,13 +34,6 @@ sub run_cmd (@)
     $timeout = 60    if (!defined($timeout) || $timeout !~ m/^\d+$/);
     $timeout = undef if ($timeout == 0);
 
-    # :TODO       12/31/2014 03:47:37 PM Ji-Hyeon Gim
-    # 예전에 잠깐 집어넣었다가 안쓸거 같아서 뺐었던 기억이 나는데...
-    # 매개변수 in에 문자열이 아니라 파일 핸들을 받는 경우에 대한 처리를
-    # 포함할 것인지 생각해보자.
-    # 그럴 경우 예전처럼 gensym으로 만들어진 cmd_in이 아니라 바로 in을
-    # 넘겨주면 되는거니까...
-
     # generate symbol
     my ($cmd_in, $cmd_out, $cmd_err) = map gensym, 1..3;
 

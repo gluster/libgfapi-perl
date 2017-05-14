@@ -33,6 +33,256 @@ sub new
     bless(\%attrs, __PACKAGE__);
 }
 
+sub mounted
+{
+
+}
+
+sub mount
+{
+
+}
+
+sub umount
+{
+
+}
+
+sub access
+{
+
+}
+
+sub chdir
+{
+
+}
+
+sub chmod
+{
+
+}
+
+sub exists
+{
+
+}
+
+sub getatime
+{
+
+}
+
+sub getctime
+{
+
+}
+
+sub getcwd
+{
+
+}
+
+sub getmtime
+{
+
+}
+
+sub getsize
+{
+
+}
+
+sub getxattr
+{
+
+}
+
+sub isdir
+{
+
+}
+
+sub isfile
+{
+
+}
+
+sub islink
+{
+
+}
+
+sub listdir
+{
+
+}
+
+sub listdir_with_stat
+{
+
+}
+
+sub scandir
+{
+
+}
+
+sub listxattr
+{
+
+}
+
+sub lstat
+{
+
+}
+
+sub makedirs
+{
+
+}
+
+sub mkdir
+{
+
+}
+
+sub fopen
+{
+
+}
+
+sub open
+{
+
+}
+
+sub opendir
+{
+
+}
+
+sub readlink
+{
+
+}
+
+sub remove
+{
+
+}
+
+sub removexattr
+{
+
+}
+
+sub rename
+{
+
+}
+
+sub rmdir
+{
+
+}
+
+sub rmtree
+{
+
+}
+
+sub setfsuid
+{
+
+}
+
+sub setfsgid
+{
+
+}
+
+sub setxattr
+{
+
+}
+
+sub stat
+{
+
+}
+
+sub statvfs
+{
+
+}
+
+sub link
+{
+
+}
+
+sub symlink
+{
+
+}
+
+sub unlink
+{
+
+}
+
+sub utime
+{
+
+}
+
+sub walk
+{
+
+}
+
+sub samefile
+{
+
+}
+
+sub copyfileobj
+{
+
+}
+
+sub copyfile
+{
+
+}
+
+sub copymode
+{
+
+}
+
+sub copystat
+{
+
+}
+
+sub copy
+{
+
+}
+
+sub copy2
+{
+
+}
+
+sub copytree
+{
+
+}
+
 1;
 
 __END__

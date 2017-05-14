@@ -1,4 +1,4 @@
-package GlusterFS::GFAPI::FFI::Dir;
+package GlusterFS::GFAPI::FFI::DirEntry;
 
 BEGIN
 {
@@ -28,7 +28,37 @@ sub new
     bless(\%attrs, __PACKAGE__);
 }
 
-sub next
+sub name
+{
+
+}
+
+sub path
+{
+
+}
+
+sub stat
+{
+
+}
+
+sub is_dir
+{
+
+}
+
+sub is_file
+{
+
+}
+
+sub is_symlink
+{
+
+}
+
+sub inode
 {
 
 }
@@ -41,7 +71,7 @@ __END__
 
 =head1 NAME
 
-GlusterFS::GFAPI::FFI::Dir - GFAPI Directory Iterator API
+GlusterFS::GFAPI::FFI::DirEntry - GFAPI Directory Entry API
 
 =head1 SYNOPSIS
 
