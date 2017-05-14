@@ -23,6 +23,8 @@ perl:
 before_install:
     - sudo apt-get update
     - sudo apt-get install -y glusterfs-server glusterfs-client libacl1 attr
+    - sudo dpkg-query -L glusterfs-server
+    - sudo dpkg-query -L glusterfs-client
 
 install:
     - cpanm -quiet --notest --skip-satisfied --installdeps .
