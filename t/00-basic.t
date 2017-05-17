@@ -100,6 +100,13 @@ my $glfs = GlusterFS::GFAPI::FFI::glfs_from_glfd($fd);
 
 ok(defined($glfs) && $glfs == $fs, sprintf('glfs_from_glfd(): %s', $glfs // 'undef'));
 
+undef($fd);
+
+# set_xlator_option
+$retval = GlusterFS::GFAPI::FFI::glfs_set_xlator_option($fs, '*-write-behind', 'resync-faield-syncs-after-fsync', 'on');
+
+ok($retval == 0, sprintf('glfs_set_xlator_option: %s', $retval // 'undef'));
+
 # open
 $fd = GlusterFS::GFAPI::FFI::glfs_open($fs, '/testfile', O_RDWR);
 
