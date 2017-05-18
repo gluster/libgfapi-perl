@@ -10,19 +10,24 @@ use strict;
 use warnings;
 use utf8;
 
+use Moo;
+use GlusterFS::GFAPI::FFI;
 use GlusterFS::GFAPI::FFI::Util qw/libgfapi_soname/;
 use Carp;
 
-use FFI::Platypus;
-use FFI::Platypus::API;
-use FFI::Platypus::Declare  qw/void string opaque/;
-use FFI::Platypus::Memory   qw/malloc free/;
-use FFI::Platypus::Buffer   qw/scalar_to_buffer buffer_to_scalar/;
 
+#---------------------------------------------------------------------------
+#   Attributes
+#---------------------------------------------------------------------------
+
+
+#---------------------------------------------------------------------------
+#   Methods
+#---------------------------------------------------------------------------
 sub new
 {
-    my $ffi = FFI::Platypus->new(lib => libgfapi_soname());
-
+    my $class = shift;
+    my %args  = @_;
     my %attrs = ();
 
     bless(\%attrs, __PACKAGE__);
@@ -30,122 +35,208 @@ sub new
 
 sub fileno
 {
+    my $self = shift;
+    my %args = @_;
 
+    return;
 }
 
 sub mode
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub name
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub closed
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub close
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub discard
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub dup
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub fallocate
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub fchmod
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub fchown
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub fdatasync
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub fgetsize
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub fgetxattr
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub flistxattr
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub fsetxattr
 {
 
+    my $self = shift;
+    my %args = @_;
+
+    return;
 }
 
 sub fremovexattr
 {
+    my $self = shift;
+    my %args = @_;
 
+    return;
 }
 
 sub fstat
 {
+    my $self = shift;
+    my %args = @_;
 
+    return;
 }
 
 sub fsync
 {
+    my $self = shift;
+    my %args = @_;
 
+    return;
 }
 
 sub ftruncate
 {
+    my $self = shift;
+    my %args = @_;
 
+    return;
 }
 
 sub lseek
 {
+    my $self = shift;
+    my %args = @_;
 
+    return;
 }
 
 sub read
 {
+    my $self = shift;
+    my %args = @_;
 
+    return;
 }
 
 sub readinto
 {
+    my $self = shift;
+    my %args = @_;
 
+    return;
 }
 
 sub write
 {
+    my $self = shift;
+    my %args = @_;
 
+    return;
 }
 
 sub zerofill
 {
+    my $self = shift;
+    my %args = @_;
 
+    return;
 }
 
 1;

@@ -10,57 +10,117 @@ use strict;
 use warnings;
 use utf8;
 
+use Moo;
+use GlusterFS::GFAPI::FFI;
 use GlusterFS::GFAPI::FFI::Util qw/libgfapi_soname/;
 use Carp;
 
-use FFI::Platypus;
-use FFI::Platypus::API;
-use FFI::Platypus::Declare  qw/void string opaque/;
-use FFI::Platypus::Memory   qw/malloc free/;
-use FFI::Platypus::Buffer   qw/scalar_to_buffer buffer_to_scalar/;
 
+#---------------------------------------------------------------------------
+#   Attributes
+#---------------------------------------------------------------------------
+has 'name' =>
+(
+    is => 'rwp',
+);
+
+has 'vol' =>
+(
+    is => 'rwp',
+);
+
+has '_lstat' =>
+(
+    is => 'rwp',
+);
+
+has '_stat' =>
+(
+    is => 'rwp',
+);
+
+has 'path' =>
+(
+    is => 'rwp',
+);
+
+
+#---------------------------------------------------------------------------
+#   Methods
+#---------------------------------------------------------------------------
 sub new
 {
-    my $ffi = FFI::Platypus->new(lib => libgfapi_soname());
+    my $class = shift;
+    my %args  = @_;
 
-    my %attrs = ();
-
-    bless(\%attrs, __PACKAGE__);
-}
-
-sub name
-{
-
-}
-
-sub path
-{
-
+    $self->_set_path(join('/', ''));
 }
 
 sub stat
 {
+    my $self = shift;
+    my %args = @_;
 
+    if ($args{follow_symlinks})
+    {
+        if (!defined($self->_stat))
+        {
+            if ($self->is_symlink)
+            {
+                $self->_set_stat($self->vol->stat($self->path));
+            }
+            else
+            {
+                $self->_set_stat($self->_lstat);
+            }
+        }
+
+        return $self->_stat;
+    }
+
+    return $self->_lstat;
 }
 
 sub is_dir
 {
+    my $self = shift;
+    my %args = @_;
 
+    if ($args{follow_symlinks} && $self->is_symlink())
+    {
+        return S_ISDIR($self->stat(follow_symlinks => 1)->st_mode);
+    }
+
+    return S_ISDIR($self->_lstat->st_mode);
 }
 
 sub is_file
 {
+    my $self = shift;
+    my %args = @_;
 
+    if ($args{follow_symlinks} && $self->is_symlink())
+    {
+        return S_ISREG($self->stat(follow_symlinks => 1)->st_mode);
+    }
+
+    return S_ISREG($self->_lstat->st_mode);
 }
 
 sub is_symlink
 {
+    my $self = shift;
+    my %args = @_;
 
+    return S_ISLNK($self->_lstat->st_mode);
 }
 
 sub inode
 {
+    my $self = shift;
+    my %args = @_;
 
+    return $self->_lstat->st_ino;
 }
 
 1;

@@ -10,27 +10,83 @@ use strict;
 use warnings;
 use utf8;
 
+use Moo;
+use GlusterFS::GFAPI::FFI;
 use GlusterFS::GFAPI::FFI::Util qw/libgfapi_soname/;
 use Carp;
 
-use FFI::Platypus;
-use FFI::Platypus::API;
-use FFI::Platypus::Declare  qw/void string opaque/;
-use FFI::Platypus::Memory   qw/malloc free/;
-use FFI::Platypus::Buffer   qw/scalar_to_buffer buffer_to_scalar/;
 
-sub new
+#---------------------------------------------------------------------------
+#   Attributes
+#---------------------------------------------------------------------------
+has 'fd' =>
+(
+    is => 'rwp',
+);
+
+has 'readdirplus' =>
+(
+    is => 'rw',
+);
+
+has 'cursor' =>
+(
+    is => 'rwp',
+);
+
+
+#---------------------------------------------------------------------------
+#   Methods
+#---------------------------------------------------------------------------
+sub BUILD
 {
-    my $ffi = FFI::Platypus->new(lib => libgfapi_soname());
+    my $self = shift;
+    my $args = shift;
 
-    my %attrs = ();
-
-    bless(\%attrs, __PACKAGE__);
+    $self->_set_cursor(GlusterFS::GFAPI::FFI::Dirent->new());
 }
 
 sub next
 {
+    my $self = shift;
+    my %args = @_;
 
+    my $entry = GlusterFS::GFAPI::FFI::Dirent->new(d_reclen => 256);
+    my $stat;
+
+    my $ret;
+
+    if ($self->readdirplus)
+    {
+        $stat = GlusterFS::GFAPI::FFI::Stat->new();
+        $ret  = glfs_readdirplus_r($self->fd, $stat, $entry, $self->cursor);
+    }
+    else
+    {
+        $ret = glfs_readdir_r($self->fd, $entry, $self->cursor);
+    }
+
+    if ($ret != 0)
+    {
+        confess($!);
+    }
+
+    if (!defined($self->cursor) || !defined($self->cursor->contents))
+    {
+        confess('StopIteration');
+    }
+
+    return $self->readdirplus ? ($entry, $stat) : $entry;
+}
+
+sub DEMOLISH
+{
+    my ($self, $is_global) = @_;
+
+    if (glfs_closedir($self->fd))
+    {
+        confess($!);
+    }
 }
 
 1;
