@@ -105,6 +105,7 @@ sub new
 
     # Type-Caster
     $glfs_ffi->attach_cast('cast_Dirent', 'opaque', 'Dirent');
+    $glfs_ffi->attach_cast('cast_Timespec', 'opaque', 'Timespec');
 
     # Facilities
     $glfs_ffi->attach(glfs_init => ['glfs_t'], => 'int');
