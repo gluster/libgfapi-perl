@@ -13,10 +13,14 @@ use utf8;
 use Moo;
 use GlusterFS::GFAPI::FFI;
 use GlusterFS::GFAPI::FFI::Util qw/libgfapi_soname/;
+use Fcntl                       qw/:mode/;
 use File::Spec;
+use POSIX                       qw/modf/;
 use Errno                       qw/EEXIST/;
 use List::MoreUtils             qw/natatime/;
+use Try::Catch;
 use Carp;
+use Data::Dumper;
 
 use constant
 {
@@ -265,7 +269,7 @@ sub exists
     my $self = shift;
     my %args = @_;
 
-    return $self->stat($args{path}) ? 1 : 0;
+    return $self->stat(path => $args{path}) ? 1 : 0;
 }
 
 sub getatime
@@ -273,7 +277,7 @@ sub getatime
     my $self = shift;
     my %args = @_;
 
-    return $self->stat($args{path})->st_atime;
+    return $self->stat(path => $args{path})->st_atime;
 }
 
 sub getctime
@@ -281,7 +285,7 @@ sub getctime
     my $self = shift;
     my %args = @_;
 
-    return $self->stat($args{path})->st_atime;
+    return $self->stat(path => $args{path})->st_atime;
 }
 
 sub getcwd
@@ -305,7 +309,7 @@ sub getmtime
     my $self = shift;
     my %args = @_;
 
-    return $self->stat($args{path})->st_mtime;
+    return $self->stat(path => $args{path})->st_mtime;
 }
 
 sub getsize
@@ -313,7 +317,7 @@ sub getsize
     my $self = shift;
     my %args = @_;
 
-    return $self->stat($args{path})->st_size;
+    return $self->stat(path => $args{path})->st_size;
 }
 
 sub getxattr
@@ -349,7 +353,7 @@ sub isdir
     my $self = shift;
     my %args = @_;
 
-    return S_ISDIR($self->stat($args{path})->st_mode);
+    return S_ISDIR($self->stat(path => $args{path})->st_mode);
 }
 
 sub isfile
@@ -357,7 +361,7 @@ sub isfile
     my $self = shift;
     my %args = @_;
 
-    return S_ISREG($self->stat($args{path})->st_mode);
+    return S_ISREG($self->stat(path => $args{path})->st_mode);
 }
 
 sub islink
@@ -365,7 +369,7 @@ sub islink
     my $self = shift;
     my %args = @_;
 
-    return S_ISLNK($self->stat($args{path})->st_mode);
+    return S_ISLNK($self->stat(path => $args{path})->st_mode);
 }
 
 sub listdir
@@ -375,7 +379,7 @@ sub listdir
 
     my @dirs;
 
-    foreach my $entry ($self->opendir($args{path}))
+    foreach my $entry ($self->opendir(path => $args{path}))
     {
         if (ref($entry) ne 'GlusterFS::GFAPI::FFI::Dirent')
         {
@@ -400,7 +404,7 @@ sub listdir_with_stat
 
     my @entries_with_stat;
 
-    my $iter = natatime(2, $self->opendir($args{path}, readdirplus => 1));
+    my $iter = natatime(2, $self->opendir(path => $args{path}, readdirplus => 1));
 
     while (my ($entry, $stat) = $iter->())
     {
@@ -426,7 +430,7 @@ sub scandir
     my $self = shift;
     my %args = @_;
 
-    my $iter = nattime(2, $self->opendir($args{path}), readdirplus => 1);
+    my $iter = nattime(2, $self->opendir(path => $args{path}), readdirplus => 1);
 
     while (my ($entry, $lstat) = $iter->())
     {
@@ -531,7 +535,7 @@ sub makedirs
 
     if (defined($head) && defined($tail) && !$self->exists($head))
     {
-        my $rc = $self->makedirs($head, $args{mode});
+        my $rc = $self->makedirs(path => $head, mode => $args{mode});
 
         if ($! != EEXIST)
         {
@@ -545,7 +549,7 @@ sub makedirs
         }
     }
 
-    $self->mkdir($args{path}, $args{mode});
+    $self->mkdir(path => $args{path}, mode => $args{mode});
 
     return 0;
 }
@@ -575,12 +579,13 @@ sub fopen
 
     $args{mode} //= 'r';
 
-    #:TODO mode 유효성 검사 및 변환
+    # :TODO
+    # mode 유효성 검사 및 변환
     my $flags = $args{mode};
 
     my $fd;
 
-    if (O_CREAT & $flags == O_CREAT)
+    if ((O_CREAT & $flags) == O_CREAT)
     {
         $fd = glfs_creat($self->fs, $args{path}, $flags, 0666);
 
@@ -609,7 +614,32 @@ sub open
     my $self = shift;
     my %args = @_;
 
-    return 0;
+    # :TODO 2017년 05월 19일 11시 02분 12초: mode 유효성 검사 및 변환
+
+    my $fd;
+
+    if ((O_CREAT & $args{flags}) == O_CREAT)
+    {
+        $fd = glfs_creat($self->fs, $args{path}, $args{flags}, $args{mode});
+
+        if (!defined($fd))
+        {
+            confess(sprintf('glfs_creat(%s, %s, %o, 0666) failed: %s'
+                    , $self->fs, $args{path}, $flags, $!));
+        }
+    }
+    else
+    {
+        $fd = glfs_open($self->fs, $args{path}, $args{flags});
+
+        if (!defined($fd))
+        {
+            confess(sprintf('glfs_open(%s, %s, %o) failed: %s'
+                    , $self->fs, $args{path}, $flags, $!));
+        }
+    }
+
+    return $fd;
 }
 
 sub opendir
@@ -617,7 +647,17 @@ sub opendir
     my $self = shift;
     my %args = @_;
 
-    return 0;
+    $args{readdirplus} = 0;
+
+    my $fd = glfs_opendir($self->fs, $args{path});
+
+    if (!defined($fd))
+    {
+        confess(sprintf('glfs_opendir(%s, %s) failed: %s'
+                , $self->fs, $args{path}));
+    }
+
+    return GlusterFS::GFAPI::FFI::Dir->new(fd => $fd, readdirplus => $args{readdirplus});
 }
 
 sub readlink
@@ -625,7 +665,16 @@ sub readlink
     my $self = shift;
     my %args = @_;
 
-    return 0;
+    my $buf = "\0" x PATH_MAX;
+    my $ret = glfs_readlink($self->fs, $args{path}, $buf, PATH_MAX);
+
+    if ($ret < 0)
+    {
+        confess(sprintf('glfs_readlink(%s, %s, %s, %d) failed: %s'
+                , $self->fs, $args{path}, 'buf', PATH_MAX, $!));
+    }
+
+    return substr($buf, 0, $ret);
 }
 
 sub remove
@@ -633,13 +682,21 @@ sub remove
     my $self = shift;
     my %args = @_;
 
-    return 0;
+    return $self->unlink(path => $args{path});
 }
 
 sub removexattr
 {
     my $self = shift;
     my %args = @_;
+
+    my $ret = glfs_removexattr($self->fs, $args{path}, $args{key});
+
+    if ($ret < 0)
+    {
+        confess(sprintf('glfs_removexattr(%s, %s, %s) failed: %s'
+                , $self->fs, $args{path}, $args{key}, $!));
+    }
 
     return 0;
 }
@@ -649,6 +706,14 @@ sub rename
     my $self = shift;
     my %args = @_;
 
+    my $ret = glfs_rename($self->fs, $args{src}, $args{dst});
+
+    if ($ret < 0)
+    {
+        confess(sprintf('glfs_rename(%s, %s, %s) failed: %s'
+                , $self->fs, $args{src}, $args{dst}, $!));
+    }
+
     return 0;
 }
 
@@ -656,6 +721,14 @@ sub rmdir
 {
     my $self = shift;
     my %args = @_;
+
+    my $ret = glfs_rmdir($self->fs, $args{path});
+
+    if ($ret < 0)
+    {
+        confess(sprintf('glfs_rmdir(%s, %s) failed: %s'
+                , $self->fs, $args{path}, $!));
+    }
 
     return 0;
 }
@@ -665,6 +738,62 @@ sub rmtree
     my $self = shift;
     my %args = @_;
 
+    $args{ignore_errors} = 0;
+    $args{onerror}       = undef;
+
+    if ($self->islink(path => $args{path}))
+    {
+        confess('Cannot call rmtree on a symbolic link');
+    }
+
+    try
+    {
+        foreach my $entry ($self->scandir(path => $args{path}))
+        {
+            my $fullname = join('/', $args{path}, $entry->name);
+
+            if ($entry->is_dir(follow_symlinks => 0))
+            {
+                $self->rmtree(
+                    path          => $fullname,
+                    ignore_errors => $args{ignore_errors},
+                    onerror       => $args{onerror});
+            }
+            else
+            {
+                try
+                {
+                    $self->unlink(path => $fullname);
+                }
+                catch
+                {
+                    my $e = shift;
+
+                    $args{onerror}->($self, \&unlink, $fullname, $e)
+                        if (ref($args{onerror}) eq 'CODE');
+                };
+            }
+        }
+    }
+    catch
+    {
+        my $e = shift;
+
+        $args{onerror}->($self, \&scandir, $args{path}, $e)
+            if (ref($args{onerror}) eq 'CODE');
+    };
+
+    try
+    {
+        $self->rmdir(path => $args{path});
+    }
+    catch
+    {
+        my $e = shift;
+
+        $args{onerror}->($self, \&rmdir, $args{path}, $e);
+    };
+
     return 0;
 }
 
@@ -672,6 +801,14 @@ sub setfsuid
 {
     my $self = shift;
     my %args = @_;
+
+    my $ret = glfs_setfsuid($args{uid});
+
+    if ($ret < 0)
+    {
+        confess(sprintf('glfs_setfsuid(%d) failed: %s'
+                , $args{uid}, $!));
+    }
 
     return 0;
 }
@@ -681,6 +818,14 @@ sub setfsgid
     my $self = shift;
     my %args = @_;
 
+    my $ret = glfs_setfsgid($args{gid});
+
+    if ($ret < 0)
+    {
+        confess(sprintf('glfs_setfsguid(%d) failed: %s'
+                , $args{gid}, $!));
+    }
+
     return 0;
 }
 
@@ -688,6 +833,20 @@ sub setxattr
 {
     my $self = shift;
     my %args = @_;
+
+    $args{flags} = 0;
+
+    my $ret = glfs_setxattr($self->fs, $args{path}, $args{key}
+                            , $args{value}, length($args{value})
+                            , $args{flags});
+
+    if ($ret < 0)
+    {
+        confess(sprintf('glfs_setxattr(%s, %s, %s, %s, %d, %o) failed: %s'
+                , $self->fs, $args{path}, $args{key}
+                , $args{value}, length($args{value})
+                , $args{flags}));
+    }
 
     return 0;
 }
@@ -697,6 +856,15 @@ sub stat
     my $self = shift;
     my %args = @_;
 
+    my $stat = GlusterFS::GFAPI::FFI::Stat->new();
+    my $rc   = glfs_stat($self->fs, $args{path}, $stat);
+
+    if ($rc < 0)
+    {
+        confess(sprintf('glfs_stat(%s, %s, %s) failed: %s'
+                , $self->fs, $args{path}, 'buf', $stat));
+    }
+
     return 0;
 }
 
@@ -704,6 +872,15 @@ sub statvfs
 {
     my $self = shift;
     my %args = @_;
+
+    my $stat = GlusterFS::GFAPI::FFI::Statvfs->new();
+    my $rc   = glfs_statvfs($self->fs, $args{path}, $stat);
+
+    if ($rc < 0)
+    {
+        confess(sprintf('glfs_statvfs(%s, %s, %s) failed: %s'
+                , $self->fs, $args{path}, 'buf', $stat));
+    }
 
     return 0;
 }
@@ -713,6 +890,14 @@ sub link
     my $self = shift;
     my %args = @_;
 
+    my $ret = glfs_link($self->fs, $args{source}, $args{link_name});
+
+    if ($ret < 0)
+    {
+        confess(sprintf('glfs_link(%s, %s, %s) failed: %s'
+                , $self->fs, $args{source}, $args{link_name}, $!));
+    }
+
     return 0;
 }
 
@@ -720,6 +905,14 @@ sub symlink
 {
     my $self = shift;
     my %args = @_;
+
+    my $ret = glfs_symlink($self->fs, $args{source}, $args{link_name});
+
+    if ($ret < 0)
+    {
+        confess(sprintf('glfs_symlink(%s, %s, %s) failed: %s'
+                , $self->fs, $args{source}, $args{link_name}));
+    }
 
     return 0;
 }
@@ -729,6 +922,14 @@ sub unlink
     my $self = shift;
     my %args = @_;
 
+    my $ret = glfs_unlink($self->fs, $args{path});
+
+    if ($ret < 0)
+    {
+        confess(sprintf('glfs_unlink(%s, %s) failed: %s'
+                , $self->fs, $args{path}, $!));
+    }
+
     return 0;
 }
 
@@ -736,6 +937,33 @@ sub utime
 {
     my $self = shift;
     my %args = @_;
+
+    my $now;
+
+    $args{atime} = time() if (!defined($args{atime}));
+    $args{mtime} = time() if (!defined($args{mtime}));
+
+    my $tspecs = GlusterFS::GFAPI::FFI::Timespecs->new();
+
+    # Set atime
+    my ($fractional, $integral) = modf($args{atime});
+
+    $tspecs->atime_sec(int($integral));
+    $tspecs->atime_nsec(int($fractional * 1e9));
+
+    # Set mtime
+    ($fractional, $integral) = modf($args{mtime});
+
+    $tspecs->mtime_sec(int($integral));
+    $tspecs->mtime_nsec(int($fractional * 1e9));
+
+    my $ret = glfs_utimens($self->fs, $args{path}, $tspecs);
+
+    if ($ret < 0)
+    {
+        confess(sprintf('glfs_utimens(%s, %s, %s) failed: %s'
+                , $self->fs, $args{path}, Dumper($tspecs), $!));
+    }
 
     return 0;
 }
@@ -745,6 +973,76 @@ sub walk
     my $self = shift;
     my %args = @_;
 
+    if (!defined($args{topdown}))
+    {
+        $args{topdown} = 1;
+    }
+
+    if (!defined($args{onerror}))
+    {
+        $args{onerror} = undef;
+    }
+
+    if (!defined($args{followlinks}))
+    {
+        $args{followlinks} = 0;
+    }
+
+    my @dirs    = ();
+    my @nondirs = ();
+
+    try
+    {
+        foreach my $entry ($self->scandir(path => $args{top}))
+        {
+            if ($entry->is_dir(follow_symlinks => $args{followlinks}))
+            {
+                push(@dirs, $entry);
+            }
+            else
+            {
+                push(@nondirs, $entry->name);
+            }
+        }
+    }
+    catch
+    {
+        if (defined($args{onerror}))
+        {
+            $args{onerror}->(@_);
+        }
+
+        return;
+    };
+
+    if ($args{topdown})
+    {
+        # yield top, [d.name for d in dirs], nondirs
+    }
+
+    foreach my $directory (@dirs)
+    {
+        # NOTE: Both is_dir() and is_symlink() can be true for the same path
+        # when follow_symlinks is set to True
+        if ($args{followlinks} || ! $directory->is_symlink())
+        {
+            my $new_path = join($args{top}, $directory->name);
+
+            foreach my $x ($self->walk(top         => $new_path,
+                                       topdown     => $args{topdown},
+                                       onerror     => $args{onerror},
+                                       followlinks => $args{followlinks}))
+            {
+                # yield x
+            }
+        }
+    }
+
+    if (!$args{topdown})
+    {
+        # yield top, [d.name for d in dirs], nondirs
+    }
+
     return 0;
 }
 
@@ -753,13 +1051,44 @@ sub samefile
     my $self = shift;
     my %args = @_;
 
-    return 0;
+    my $s1 = $self->stat(path => $args{path1});
+    my $s2 = $self->stat(path => $args{path2});
+
+    return $s1->st_ino == $s2->st_ino && $s1->st_dev == $s2->st_dev;
 }
 
 sub copyfileobj
 {
     my $self = shift;
     my %args = @_;
+
+    if (!defined($args{length}))
+    {
+        $args{length} = 128 * 1024;
+    }
+
+    my $buf = bytearray(length);
+
+    while (1)
+    {
+        my $nread = $args{fsrc}->readinto($buf);
+
+        if (!$nread || $nread <= 0)
+        {
+            break;
+        }
+
+        if ($nread == $length)
+        {
+            $args{fdst}->write($buf);
+        }
+        else
+        {
+            # TODO:
+            # Use memoryview to avoid internal copy done on slicing.
+            $args{fdst}->write(substr($buf, 0, $nread));
+        }
+    }
 
     return 0;
 }
@@ -769,7 +1098,26 @@ sub copyfile
     my $self = shift;
     my %args = @_;
 
-    return 0;
+    my $samefile = 0;
+
+    try
+    {
+        $samefile = $self->samefile(path1 => $args{src}, path2 => $args{dst});
+    }
+    catch
+    {
+        return;
+    };
+
+    if ($samefile)
+    {
+        confess(sprintf('`%s` and `%s` are the same file', $args{src}, $args{dst}));
+    }
+
+    my $fsrc = $self->fopen(path => $args{src}, mode => 'rb');
+    my $fdst = $self->fopen(path => $args{dst}, mode => 'wb');
+
+    return $self->copyfileobj(fsrc => $fsrc, fdst => $fdst);
 }
 
 sub copymode
@@ -777,7 +1125,10 @@ sub copymode
     my $self = shift;
     my %args = @_;
 
-    return 0;
+    my $st   = $self->stat(path => $args{src});
+    my $mode = S_IMODE($st->st_mode);
+
+    return $self->chmod(path => $args{dst}, mode => $mode);
 }
 
 sub copystat
@@ -785,7 +1136,18 @@ sub copystat
     my $self = shift;
     my %args = @_;
 
-    return 0;
+    my $st   = $self->stat(path => $args{src});
+    my $mode = S_IMODE($st->st_mode);
+
+    my $ret = 0;
+
+    $ret |= $self->utime(path => $args{dst},
+                         atime => $st->st_atime,
+                         mtime => $st->st_mtime);
+    $ret |= $self->chmod(path => $args{dst}, mode => $mode);
+
+    # TODO: Handle st_flags on FreeBSD
+    return $ret;
 }
 
 sub copy
@@ -793,7 +1155,17 @@ sub copy
     my $self = shift;
     my %args = @_;
 
-    return 0;
+    if ($self->isdir(path => $args{dst}))
+    {
+        $args{dst} = join($args{dst}, basename($args{src}));
+    }
+
+    my $ret = 0;
+
+    $ret |= $self->copyfile(src => $args{src}, dst => $args{dst});
+    $ret |= $self->copymode(src => $args{src}, dst => $args{dst});
+
+    return $ret;
 }
 
 sub copy2
@@ -801,7 +1173,17 @@ sub copy2
     my $self = shift;
     my %args = @_;
 
-    return 0;
+    if ($self->isdir(path => $args{dst}))
+    {
+        $args{dst} = join($args{dst}, basename($args{src}));
+    }
+
+    my $ret = 0;
+
+    $ret |= $self->copyfile($args{src}, $args{dst});
+    $ret |= $self->copystat($args{src}, $args{dst});
+
+    return $ret;
 }
 
 sub copytree
@@ -809,7 +1191,83 @@ sub copytree
     my $self = shift;
     my %args = @_;
 
-    return 0;
+    if (!defined($args{symlinks}))
+    {
+        $args{symlinks} = 0;
+    }
+
+    if (!defined($args{ignore}))
+    {
+        $args{ignore} = undef;
+    }
+
+    my $names_with_stat = $self->listdir_with_stat(path => $args{src});
+
+    my @ignored_names;
+
+    if (defined($args{ignore}))
+    {
+        @ignored_names = ignore();
+    }
+    else
+    {
+        @ignored_names = set();
+    }
+
+    $self->makedirs(path => $args{dst});
+
+    my @errors = ();
+
+    my $iter = natatime(2, @{$names_with_stat});
+
+    while (my ($name, $st) = $iter->())
+    {
+        if (grep { $name eq $_; } @ignored_names)
+        {
+            next;
+        }
+
+        my $srcpath = join($args{src}, $name);
+        my $dstpath = join($args{dst}, $name);
+
+        try
+        {
+            if ($args{symlinks} && S_ISLNK($st->st_mode))
+            {
+                my $linkto = $self->readlink($srcpath);
+                $self->symlink($linkto, $dstpath);
+            }
+            elsif ($_isdir->($srcpath, $st, follow_symlinks => !$args{symlinks}))
+            {
+                $self->copytree(src => $srcpath, dst => $dstpath, symlinks => $args{symlinks});
+            }
+            else
+            {
+                my $fsrc = $self->fopen(path => $srcpath, 'rb');
+                my $fdst = $self->fopen(path => $dstpath, 'wb');
+
+                $self->copyfileobj(fsrc => $fsrc, fdst => $fdst);
+
+                $self->utime(path => $dstpath, ($st->st_atime, $st->st_mtime));
+                $self->chmod(path => $dstpath, S_IMODE($st->st_mode));
+            }
+        }
+        catch
+        {
+            push(@errors, { src => $srcpath, dst => $dstpath, reason => \@_ });
+        };
+    }
+
+    try
+    {
+        $self->copystat(src => $src, dst => $dst);
+    }
+    catch
+    {
+        push(@errors, { src => $src, dst => $dst, reason => \@_ });
+    };
+
+    return @errors;
 }
 
 1;

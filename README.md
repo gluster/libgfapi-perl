@@ -27,8 +27,8 @@ GlusterFS libgfapi binding for Perl 5
 | [o] | [o] | glfs_close() |
 | [o] | [o] | glfs_from_glfd() |
 | [o] | [o] | glfs_set_xlator_option() |
-| [o] | [x] | glfs_read() |
-| [o] | [x] | glfs_write() |
+| [o] | [o] | glfs_read() |
+| [o] | [o] | glfs_write() |
 | [x] | [x] | glfs_read_async() |
 | [x] | [x] | glfs_write_async() |
 | [o] | [x] | glfs_readv() |
