@@ -63,14 +63,14 @@ record_layout(qw/
     long    mtime_nsec
 /);
 
-#package GlusterFS::GFAPI::FFI::Iovec;
-#
-#use FFI::Platypus::Record;
-#
-#record_layout(qw/
-#    opaque  iov_base
-#    size_t  iov_len
-#/);
+package GlusterFS::GFAPI::FFI::Iovec;
+
+use FFI::Platypus::Record;
+
+record_layout(qw/
+    opaque  iov_base
+    size_t  iov_len
+/);
 
 package GlusterFS::GFAPI::FFI;
 
@@ -109,7 +109,7 @@ sub new
     $glfs_ffi->type('record(GlusterFS::GFAPI::FFI::Statvfs)'   => 'Statvfs');
     $glfs_ffi->type('record(GlusterFS::GFAPI::FFI::Dirent)'    => 'Dirent');
     $glfs_ffi->type('record(GlusterFS::GFAPI::FFI::Timespecs)' => 'Timespecs');
-    #$glfs_ffi->type('record(GlusterFS::GFAPI::FFI::Iovec)'    => 'iovec');
+    $glfs_ffi->type('record(GlusterFS::GFAPI::FFI::Iovec)'     => 'Iovec');
 
     # Closure
     $glfs_ffi->type('(glfs_fd_t, ssize_t, opaque)->opaque', 'glfs_io_cbk');
@@ -138,18 +138,22 @@ sub new
     $glfs_ffi->attach(glfs_write => ['glfs_fd_t', 'opaque', 'size_t', 'int'] => 'ssize_t');
     $glfs_ffi->attach(glfs_read_async => ['glfs_fd_t', 'opaque', 'size_t', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
     $glfs_ffi->attach(glfs_write_async => ['glfs_fd_t', 'opaque', 'size_t', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
-    #$glfs_ffi->attach(glfs_readv => ['glfs_fd_t', 'iovec', 'int', 'int'] => 'ssize_t');
-    #$glfs_ffi->attach(glfs_writev => ['glfs_fd_t', 'iovec', 'int', 'int'] => 'ssize_t');
-    #$glfs_ffi->attach(glfs_readv_async => ['glfs_fd_t', 'iovec', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
-    #$glfs_ffi->attach(glfs_writev_async => ['glfs_fd_t', 'iovec', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
+
+    $glfs_ffi->attach(glfs_readv => ['glfs_fd_t', 'Iovec', 'int', 'int'] => 'ssize_t');
+    $glfs_ffi->attach(glfs_writev => ['glfs_fd_t', 'Iovec', 'int', 'int'] => 'ssize_t');
+    $glfs_ffi->attach(glfs_readv_async => ['glfs_fd_t', 'Iovec', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
+    $glfs_ffi->attach(glfs_writev_async => ['glfs_fd_t', 'Iovec', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
+
     $glfs_ffi->attach(glfs_pread => ['glfs_fd_t', 'opaque', 'size_t', 'int', 'int'] => 'ssize_t');
     $glfs_ffi->attach(glfs_pwrite => ['glfs_fd_t', 'opaque', 'size_t', 'int', 'int'] => 'ssize_t');
     $glfs_ffi->attach(glfs_pread_async => ['glfs_fd_t', 'opaque', 'size_t', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
     $glfs_ffi->attach(glfs_pwrite_async => ['glfs_fd_t', 'opaque', 'size_t', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
-    #$glfs_ffi->attach(glfs_preadv => ['glfs_fd_t', 'iovec', 'int', 'int', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'ssize_t');
-    #$glfs_ffi->attach(glfs_pwritev => ['glfs_fd_t', 'iovec', 'int', 'int', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'ssize_t');
-    #$glfs_ffi->attach(glfs_preadv_async => ['glfs_fd_t', 'iovec', 'size_t', 'int'] => 'int');
-    #$glfs_ffi->attach(glfs_pwritev_async => ['glfs_fd_t', 'iovec', 'size_t', 'int'] => 'int');
+
+    $glfs_ffi->attach(glfs_preadv => ['glfs_fd_t', 'Iovec', 'int', 'int', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'ssize_t');
+    $glfs_ffi->attach(glfs_pwritev => ['glfs_fd_t', 'Iovec', 'int', 'int', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'ssize_t');
+    $glfs_ffi->attach(glfs_preadv_async => ['glfs_fd_t', 'Iovec', 'size_t', 'int'] => 'int');
+    $glfs_ffi->attach(glfs_pwritev_async => ['glfs_fd_t', 'Iovec', 'size_t', 'int'] => 'int');
+
     $glfs_ffi->attach(glfs_lseek => ['glfs_fd_t', 'int', 'int'] => 'int');
     $glfs_ffi->attach(glfs_truncate => ['glfs_t', 'string', 'int'] => 'int');
     $glfs_ffi->attach(glfs_ftruncate => ['glfs_fd_t', 'int'] => 'int');
