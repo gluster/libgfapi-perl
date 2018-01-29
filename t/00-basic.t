@@ -115,6 +115,44 @@ subtest 'creat' => sub
     ok(`ls -al /mnt/libgfapi-perl` =~ m/-rw.+ testfile\n/, 'testfile has exsits');
 };
 
+# stat
+subtest 'stat' => sub
+{
+    my $stat   = GlusterFS::GFAPI::FFI::Stat->new();
+    my $retval = GlusterFS::GFAPI::FFI::glfs_stat($fs, '/testfile', $stat);
+
+    ok($retval == 0, sprintf('glfs_stat(): %d', $retval));
+
+    ok(defined($stat->st_ino),     "	ino     : " . $stat->st_ino // 'undef');
+    ok(defined($stat->st_mode),    "	mode    : " . $stat->st_mode // 'undef');
+    ok(defined($stat->st_size),    "	size    : " . $stat->st_size // 'undef');
+    ok(defined($stat->st_blksize), "	blksize : " . $stat->st_blksize // 'undef');
+    ok(defined($stat->st_uid),     "	uid     : " . $stat->st_uid // 'undef');
+    ok(defined($stat->st_gid),     "	gid     : " . $stat->st_gid // 'undef');
+    ok(defined($stat->st_atime),   "	atime   : " . $stat->st_atime // 'undef');
+    ok(defined($stat->st_mtime),   "	mtime   : " . $stat->st_mtime // 'undef');
+    ok(defined($stat->st_ctime),   "	ctime   : " . $stat->st_ctime // 'undef');
+};
+
+# lstat
+subtest 'lstat' => sub
+{
+    my $stat   = GlusterFS::GFAPI::FFI::Stat->new();
+    my $retval = GlusterFS::GFAPI::FFI::glfs_lstat($fs, '/testfile', $stat);
+
+    ok($retval == 0, sprintf('glfs_lstat(): %d', $retval));
+
+    ok(defined($stat->st_ino),     "	ino     : " . $stat->st_ino // 'undef');
+    ok(defined($stat->st_mode),    "	mode    : " . $stat->st_mode // 'undef');
+    ok(defined($stat->st_size),    "	size    : " . $stat->st_size // 'undef');
+    ok(defined($stat->st_blksize), "	blksize : " . $stat->st_blksize // 'undef');
+    ok(defined($stat->st_uid),     "	uid     : " . $stat->st_uid // 'undef');
+    ok(defined($stat->st_gid),     "	gid     : " . $stat->st_gid // 'undef');
+    ok(defined($stat->st_atime),   "	atime   : " . $stat->st_atime // 'undef');
+    ok(defined($stat->st_mtime),   "	mtime   : " . $stat->st_mtime // 'undef');
+    ok(defined($stat->st_ctime),   "	ctime   : " . $stat->st_ctime // 'undef');
+};
+
 # from_glfd
 subtest 'from_glfd' => sub
 {
@@ -144,6 +182,25 @@ subtest 'open' => sub
     $fd = GlusterFS::GFAPI::FFI::glfs_open($fs, '/testfile', O_RDWR);
 
     ok($fd, sprintf('glfs_open(): %d', $fd));
+};
+
+# fstat
+subtest 'fstat' => sub
+{
+    my $stat   = GlusterFS::GFAPI::FFI::Stat->new();
+    my $retval = GlusterFS::GFAPI::FFI::glfs_fstat($fd, $stat);
+
+    ok($retval == 0, sprintf('glfs_fstat(): %d', $retval));
+
+    ok(defined($stat->st_ino),     "	ino     : " . $stat->st_ino // 'undef');
+    ok(defined($stat->st_mode),    "	mode    : " . $stat->st_mode // 'undef');
+    ok(defined($stat->st_size),    "	size    : " . $stat->st_size // 'undef');
+    ok(defined($stat->st_blksize), "	blksize : " . $stat->st_blksize // 'undef');
+    ok(defined($stat->st_uid),     "	uid     : " . $stat->st_uid // 'undef');
+    ok(defined($stat->st_gid),     "	gid     : " . $stat->st_gid // 'undef');
+    ok(defined($stat->st_atime),   "	atime   : " . $stat->st_atime // 'undef');
+    ok(defined($stat->st_mtime),   "	mtime   : " . $stat->st_mtime // 'undef');
+    ok(defined($stat->st_ctime),   "	ctime   : " . $stat->st_ctime // 'undef');
 };
 
 # write
@@ -178,31 +235,44 @@ subtest 'read' => sub
     free($buffer);
 };
 
+# lseek
+subtest 'lseek' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_lseek($fd, 0, 0);
+
+    ok($retval == 0, sprintf('glfs_lseek(): %d', $retval));
+};
+
+# pwrite
+subtest 'pwrite' => sub
+{
+    my $retval = 0;
+
+    ok($retval == 0, sprintf('glfs_pwrite(): %d', $retval));
+};
+
+# lseek
+subtest 'lseek' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_lseek($fd, 0, 0);
+
+    ok($retval == 0, sprintf('glfs_lseek(): %d', $retval));
+};
+
+# pread
+subtest 'pread' => sub
+{
+    my $retval = 0;
+
+    ok($retval == 0, sprintf('glfs_pread(): %d', $retval));
+};
+
 # close
 subtest 'close' => sub
 {
     my $retval = GlusterFS::GFAPI::FFI::glfs_close($fd);
 
     ok($retval == 0, sprintf('glfs_close(): %d', $retval));
-};
-
-# lstat
-subtest 'lstat' => sub
-{
-    my $stat   = GlusterFS::GFAPI::FFI::Stat->new();
-    my $retval = GlusterFS::GFAPI::FFI::glfs_lstat($fs, '/testfile', $stat);
-
-    ok($retval == 0, sprintf('glfs_lstat(): %d', $retval));
-
-    ok(defined($stat->st_ino),     "	ino     : " . $stat->st_ino // 'undef');
-    ok(defined($stat->st_mode),    "	mode    : " . $stat->st_mode // 'undef');
-    ok(defined($stat->st_size),    "	size    : " . $stat->st_size // 'undef');
-    ok(defined($stat->st_blksize), "	blksize : " . $stat->st_blksize // 'undef');
-    ok(defined($stat->st_uid),     "	uid     : " . $stat->st_uid // 'undef');
-    ok(defined($stat->st_gid),     "	gid     : " . $stat->st_gid // 'undef');
-    ok(defined($stat->st_atime),   "	atime   : " . $stat->st_atime // 'undef');
-    ok(defined($stat->st_mtime),   "	mtime   : " . $stat->st_mtime // 'undef');
-    ok(defined($stat->st_ctime),   "	ctime   : " . $stat->st_ctime // 'undef');
 };
 
 # mkdir
