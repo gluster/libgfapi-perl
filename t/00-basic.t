@@ -513,12 +513,39 @@ subtest 'access' => sub
         ok(($_ eq 'X_OK' ? abs($retval) : !$retval),
             sprintf('glfs_access(%s): %d', $_, $retval));
 
-        diag("error: $!") if ($retval);
+        diag("error: $!") if ($_ eq 'X_OK' ? !abs($retval) : $retval);
     } ('F_OK', 'R_OK', 'W_OK', 'X_OK');
 
     use strict 'refs';
 
     return;
+};
+
+# symlink
+subtest 'symlink' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_symlink($fs, '/tmp', "/${fname}_symlink");
+
+    ok($retval == 0, sprintf('glfs_symlink(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
+# readlink
+subtest 'readlink' => sub
+{
+    my $buffer = calloc(256, 1);
+
+    my $retval = GlusterFS::GFAPI::FFI::glfs_readlink($fs, "/${fname}_symlink", $buffer, 256);
+
+    my $linkname = substr($buffer, 0, $retval);
+
+    ok($retval == length('/tmp'), sprintf('glfs_readlink(): %d', $retval));
+    ok($linkname eq '/tmp', sprintf('	linkname: %s', $linkname // 'undef'));
+
+    diag("error: $!") if ($retval < 0);
+
+    free($buffer);
 };
 
 # mkdir
