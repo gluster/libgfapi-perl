@@ -357,31 +357,29 @@ subtest 'lseek' => sub
 # pwrite
 subtest 'pwrite' => sub
 {
-    my $retval = 0;
+    my $text   = 'This is a lipsum';
+    my $len    = length($text);
+    my $buffer = strdup($text);
+    my $retval = GlusterFS::GFAPI::FFI::glfs_pwrite($fd, $buffer, $len, 100);
 
-    ok($retval == 0, sprintf('glfs_pwrite(): %d', $retval));
+    ok($retval > 0, sprintf('glfs_pwrite(): %d', $retval));
 
-    diag("error: $!") if ($retval);
-};
+    diag("error: $!") if ($retval < 0);
 
-# lseek
-subtest 'lseek' => sub
-{
-    my $retval = GlusterFS::GFAPI::FFI::glfs_lseek($fd, 0, 0);
-
-    ok($retval == 0, sprintf('glfs_lseek(): %d', $retval));
-
-    diag("error: $!") if ($retval);
+    free($buffer);
 };
 
 # pread
 subtest 'pread' => sub
 {
-    my $retval = 0;
+    my $buffer = calloc(256, 1);
+    my $retval = GlusterFS::GFAPI::FFI::glfs_pread($fd, $buffer, 256, 100);
 
-    ok($retval == 0, sprintf('glfs_pread(): %d', $retval));
+    ok($retval > 0, sprintf('glfs_pread(): %s(%d)', cast('opaque' => 'string', $buffer), $retval));
 
-    diag("error: $!") if ($retval);
+    diag("error: $!") if ($retval < 0);
+
+    free($buffer);
 };
 
 # close
