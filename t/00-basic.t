@@ -344,14 +344,24 @@ subtest 'read' => sub
     free($buffer);
 };
 
-# lseek
-subtest 'lseek' => sub
+# truncate
+subtest 'truncate' => sub
 {
-    my $retval = GlusterFS::GFAPI::FFI::glfs_lseek($fd, 0, 0);
+    my $retval = GlusterFS::GFAPI::FFI::glfs_truncate($fs, "/$fname", 0);
 
-    ok($retval == 0, sprintf('glfs_lseek(): %d', $retval));
+    ok($retval == 0, sprintf('glfs_truncate(): %d', $retval));
 
     diag("error: $!") if ($retval);
+
+    my $stat = GlusterFS::GFAPI::FFI::Stat->new();
+
+    $retval = GlusterFS::GFAPI::FFI::glfs_lstat($fs, "/$fname", $stat);
+
+    ok($retval == 0, sprintf('glfs_lstat(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    cmp_ok($stat->st_size, '==', 0, '	size : ' . $stat->st_size // 'undef');
 };
 
 # pwrite
@@ -380,6 +390,26 @@ subtest 'pread' => sub
     diag("error: $!") if ($retval < 0);
 
     free($buffer);
+};
+
+# ftruncate
+subtest 'ftruncate' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_ftruncate($fd, 0);
+
+    ok($retval == 0, sprintf('glfs_ftruncate(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    my $stat = GlusterFS::GFAPI::FFI::Stat->new();
+
+    $retval = GlusterFS::GFAPI::FFI::glfs_lstat($fs, "/$fname", $stat);
+
+    ok($retval == 0, sprintf('glfs_lstat(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    cmp_ok($stat->st_size, '==', 0, '	size : ' . $stat->st_size // 'undef');
 };
 
 # close

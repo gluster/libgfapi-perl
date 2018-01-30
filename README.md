@@ -44,8 +44,8 @@ GlusterFS libgfapi binding for Perl 5
 | [x] | [x] | glfs_preadv_async() |
 | [x] | [x] | glfs_pwritev_async() |
 | [o] | [o] | glfs_lseek() |
-| [o] | [x] | glfs_truncate() |
-| [o] | [x] | glfs_ftruncate() |
+| [o] | [o] | glfs_truncate() |
+| [o] | [o] | glfs_ftruncate() |
 | [x] | [x] | glfs_ftruncate_async() |
 | [o] | [o] | glfs_lstat() |
 | [o] | [o] | glfs_stat() |
