@@ -508,6 +508,28 @@ subtest 'fchown' => sub
     diag("error: $!") if ($retval);
 };
 
+# fallocate
+subtest 'fallocate' => sub
+{
+    system('ls -al /mnt/libgfapi-perl');
+
+    my $retval = GlusterFS::GFAPI::FFI::glfs_fallocate($fd, 0, 0, 1024);
+
+    ok($retval == 0, sprintf('glfs_fallocate(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    my $stat = GlusterFS::GFAPI::FFI::Stat->new();
+
+    $retval = GlusterFS::GFAPI::FFI::glfs_lstat($fs, "/$fname", $stat);
+
+    ok($retval == 0, sprintf('glfs_fallocate(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    system('ls -al /mnt/libgfapi-perl');
+};
+
 # close
 subtest 'close' => sub
 {

@@ -92,7 +92,7 @@ GlusterFS libgfapi binding for Perl 5
 | [o] | [x] | glfs_removexattr() |
 | [o] | [x] | glfs_lremovexattr() |
 | [o] | [x] | glfs_fremovexattr() |
-| [o] | [x] | glfs_fallocate() |
+| [o] | [o] | glfs_fallocate() |
 | [o] | [x] | glfs_discard() |
 | [x] | [x] | glfs_discard_async() |
 | [o] | [x] | glfs_zerofill() |
