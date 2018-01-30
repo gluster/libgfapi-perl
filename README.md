@@ -74,9 +74,9 @@ GlusterFS libgfapi binding for Perl 5
 | [o] | [o] | glfs_statvfs() |
 | [o] | [o] | glfs_chmod() |
 | [o] | [o] | glfs_fchmod() |
-| [o] | [x] | glfs_chown() |
-| [o] | [x] | glfs_lchown() |
-| [o] | [x] | glfs_fchown() |
+| [o] | [o] | glfs_chown() |
+| [o] | [o] | glfs_lchown() |
+| [o] | [o] | glfs_fchown() |
 | [o] | [o] | glfs_utimens() |
 | [o] | [o] | glfs_lutimens() |
 | [o] | [o] | glfs_futimens() |

@@ -476,6 +476,38 @@ subtest 'fchmod' => sub
     cmp_ok($perm, '==', 0644, '	mode : ' . sprintf('%o', $perm));
 };
 
+my ($login, $pass, $uid, $gid) = getpwuid($<);
+
+# chown
+subtest 'chown' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_chown($fs, "/$fname", $uid, $gid);
+
+    ok($retval == 0, sprintf('glfs_chown(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
+# lchown
+subtest 'lchown' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_lchown($fs, "/$fname", $uid, $gid);
+
+    ok($retval == 0, sprintf('glfs_lchown(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
+# fchown
+subtest 'fchown' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_fchown($fd, $uid, $gid);
+
+    ok($retval == 0, sprintf('glfs_fchown(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
 # close
 subtest 'close' => sub
 {
