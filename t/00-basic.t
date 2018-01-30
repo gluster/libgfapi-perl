@@ -379,6 +379,26 @@ subtest 'pwrite' => sub
     free($buffer);
 };
 
+# fsync
+subtest 'fsync' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_fsync($fd);
+
+    ok($retval == 0, sprintf('glfs_fsync(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
+# fdatasync
+subtest 'fdatasync' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_fdatasync($fd);
+
+    ok($retval == 0, sprintf('glfs_fdatasync(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
 # pread
 subtest 'pread' => sub
 {

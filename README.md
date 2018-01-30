@@ -50,9 +50,9 @@ GlusterFS libgfapi binding for Perl 5
 | [o] | [o] | glfs_lstat() |
 | [o] | [o] | glfs_stat() |
 | [o] | [o] | glfs_fstat() |
-| [o] | [x] | glfs_fsync() |
+| [o] | [o] | glfs_fsync() |
 | [x] | [x] | glfs_fsync_async() |
-| [o] | [x] | glfs_fdatasync() |
+| [o] | [o] | glfs_fdatasync() |
 | [x] | [x] | glfs_fdatasync_async() |
 | [o] | [x] | glfs_access() |
 | [o] | [x] | glfs_symlink() |
