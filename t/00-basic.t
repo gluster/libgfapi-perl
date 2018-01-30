@@ -432,6 +432,50 @@ subtest 'ftruncate' => sub
     cmp_ok($stat->st_size, '==', 0, '	size : ' . $stat->st_size // 'undef');
 };
 
+# chmod
+subtest 'chmod' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_chmod($fs, "/$fname", 0777);
+
+    ok($retval == 0, sprintf('glfs_chmod(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    my $stat = GlusterFS::GFAPI::FFI::Stat->new();
+
+    $retval = GlusterFS::GFAPI::FFI::glfs_lstat($fs, "/$fname", $stat);
+
+    ok($retval == 0, sprintf('glfs_lstat(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    my $perm = $stat->st_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
+
+    cmp_ok($perm, '==', 0777, '	mode : ' . sprintf('%o', $perm));
+};
+
+# fchmod
+subtest 'fchmod' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_fchmod($fd, 0644);
+
+    ok($retval == 0, sprintf('glfs_fchmod(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    my $stat = GlusterFS::GFAPI::FFI::Stat->new();
+
+    $retval = GlusterFS::GFAPI::FFI::glfs_lstat($fs, "/$fname", $stat);
+
+    ok($retval == 0, sprintf('glfs_lstat(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    my $perm = $stat->st_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
+
+    cmp_ok($perm, '==', 0644, '	mode : ' . sprintf('%o', $perm));
+};
+
 # close
 subtest 'close' => sub
 {
@@ -440,6 +484,41 @@ subtest 'close' => sub
     ok($retval == 0, sprintf('glfs_close(): %d', $retval));
 
     diag("error: $!") if ($retval);
+};
+
+# access
+subtest 'access' => sub
+{
+    my $stat = GlusterFS::GFAPI::FFI::Stat->new();
+
+    my $retval = GlusterFS::GFAPI::FFI::glfs_lstat($fs, "/$fname", $stat);
+
+    ok($retval == 0, sprintf('glfs_lstat(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    my $perm = $stat->st_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
+
+    cmp_ok($perm, '==', 0644, '	mode : ' . sprintf('%o', $perm));
+
+    no strict 'refs';
+
+    # This is a trick to invalidate cache for this file
+    system('ls -al /mnt/libgfapi-perl 2>&1 1>/dev/null');
+
+    map
+    {
+        $retval = GlusterFS::GFAPI::FFI::glfs_access($fs, "/$fname", *{"POSIX::$_"}{CODE}->());
+
+        ok(($_ eq 'X_OK' ? abs($retval) : !$retval),
+            sprintf('glfs_access(%s): %d', $_, $retval));
+
+        diag("error: $!") if ($retval);
+    } ('F_OK', 'R_OK', 'W_OK', 'X_OK');
+
+    use strict 'refs';
+
+    return;
 };
 
 # mkdir
