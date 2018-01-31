@@ -511,8 +511,6 @@ subtest 'fchown' => sub
 # fallocate
 subtest 'fallocate' => sub
 {
-    system('ls -al /mnt/libgfapi-perl');
-
     my $retval = GlusterFS::GFAPI::FFI::glfs_fallocate($fd, 0, 0, 1024);
 
     ok($retval == 0, sprintf('glfs_fallocate(): %d', $retval));
@@ -533,8 +531,6 @@ subtest 'fallocate' => sub
 # discard
 subtest 'discard' => sub
 {
-    system('ls -al /mnt/libgfapi-perl');
-
     # :TODO 2018/01/31 10:50:02 by P.G.
     # we need to verify discarding of this range
     my $retval = GlusterFS::GFAPI::FFI::glfs_discard($fd, 0, 128);
@@ -542,8 +538,18 @@ subtest 'discard' => sub
     ok($retval == 0, sprintf('glfs_discard(): %d', $retval));
 
     diag("error: $!") if ($retval);
+};
 
-    system('ls -al /mnt/libgfapi-perl');
+# zerofill
+subtest 'zerofill' => sub
+{
+    # :TODO 2018/01/31 10:50:02 by P.G.
+    # we need to verify zero-filling of this range
+    my $retval = GlusterFS::GFAPI::FFI::glfs_zerofill($fd, 128, 128);
+
+    ok($retval == 0, sprintf('glfs_zerofill(): %d', $retval));
+
+    diag("error: $!") if ($retval);
 };
 
 # close

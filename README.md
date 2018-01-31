@@ -95,7 +95,7 @@ GlusterFS libgfapi binding for Perl 5
 | [o] | [o] | glfs_fallocate() |
 | [o] | [o] | glfs_discard() |
 | [x] | [x] | glfs_discard_async() |
-| [o] | [x] | glfs_zerofill() |
+| [o] | [o] | glfs_zerofill() |
 | [x] | [x] | glfs_zerofill_async() |
 | [o] | [x] | glfs_getcwd() |
 | [o] | [x] | glfs_chdir() |
