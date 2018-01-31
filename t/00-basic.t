@@ -641,6 +641,16 @@ subtest 'mknod' => sub
     diag("error: $!") if ($retval);
 };
 
+# rename
+subtest 'rename' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_rename($fs, '/mknod', '/mknod_renamed');
+
+    ok($retval == 0, sprintf('glfs_rename(): %d', $retval));
+
+    diag("error: $!") if ($retval < 0);
+};
+
 # mkdir
 subtest 'mkdir' => sub
 {
