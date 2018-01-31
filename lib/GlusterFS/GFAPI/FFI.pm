@@ -139,25 +139,25 @@ sub new
     $glfs_ffi->attach(glfs_read_async => ['glfs_fd_t', 'opaque', 'size_t', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
     $glfs_ffi->attach(glfs_write_async => ['glfs_fd_t', 'opaque', 'size_t', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
 
-    $glfs_ffi->attach(glfs_readv => ['glfs_fd_t', 'Iovec', 'int', 'int'] => 'ssize_t');
-    $glfs_ffi->attach(glfs_writev => ['glfs_fd_t', 'Iovec', 'int', 'int'] => 'ssize_t');
+    $glfs_ffi->attach(glfs_readv => ['glfs_fd_t', 'Iovec', 'off_t', 'int'] => 'ssize_t');
+    $glfs_ffi->attach(glfs_writev => ['glfs_fd_t', 'Iovec', 'off_t', 'int'] => 'ssize_t');
     $glfs_ffi->attach(glfs_readv_async => ['glfs_fd_t', 'Iovec', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
     $glfs_ffi->attach(glfs_writev_async => ['glfs_fd_t', 'Iovec', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
 
     $glfs_ffi->attach(glfs_pread => ['glfs_fd_t', 'opaque', 'size_t', 'int', 'int'] => 'ssize_t');
     $glfs_ffi->attach(glfs_pwrite => ['glfs_fd_t', 'opaque', 'size_t', 'int', 'int'] => 'ssize_t');
-    $glfs_ffi->attach(glfs_pread_async => ['glfs_fd_t', 'opaque', 'size_t', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
-    $glfs_ffi->attach(glfs_pwrite_async => ['glfs_fd_t', 'opaque', 'size_t', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
+    $glfs_ffi->attach(glfs_pread_async => ['glfs_fd_t', 'opaque', 'size_t', 'off_t', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
+    $glfs_ffi->attach(glfs_pwrite_async => ['glfs_fd_t', 'opaque', 'size_t', 'off_t', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
 
-    $glfs_ffi->attach(glfs_preadv => ['glfs_fd_t', 'Iovec', 'int', 'int', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'ssize_t');
-    $glfs_ffi->attach(glfs_pwritev => ['glfs_fd_t', 'Iovec', 'int', 'int', 'int', 'int', 'glfs_io_cbk', 'opaque'] => 'ssize_t');
+    $glfs_ffi->attach(glfs_preadv => ['glfs_fd_t', 'Iovec', 'int', 'int', 'int', 'off_t', 'glfs_io_cbk', 'opaque'] => 'ssize_t');
+    $glfs_ffi->attach(glfs_pwritev => ['glfs_fd_t', 'Iovec', 'int', 'int', 'int', 'off_t', 'glfs_io_cbk', 'opaque'] => 'ssize_t');
     $glfs_ffi->attach(glfs_preadv_async => ['glfs_fd_t', 'Iovec', 'size_t', 'int'] => 'int');
     $glfs_ffi->attach(glfs_pwritev_async => ['glfs_fd_t', 'Iovec', 'size_t', 'int'] => 'int');
 
-    $glfs_ffi->attach(glfs_lseek => ['glfs_fd_t', 'int', 'int'] => 'int');
-    $glfs_ffi->attach(glfs_truncate => ['glfs_t', 'string', 'int'] => 'int');
-    $glfs_ffi->attach(glfs_ftruncate => ['glfs_fd_t', 'int'] => 'int');
-    $glfs_ffi->attach(glfs_ftruncate_async => ['glfs_fd_t', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
+    $glfs_ffi->attach(glfs_lseek => ['glfs_fd_t', 'off_t', 'int'] => 'int');
+    $glfs_ffi->attach(glfs_truncate => ['glfs_t', 'string', 'off_t'] => 'int');
+    $glfs_ffi->attach(glfs_ftruncate => ['glfs_fd_t', 'off_t'] => 'int');
+    $glfs_ffi->attach(glfs_ftruncate_async => ['glfs_fd_t', 'off_t', 'glfs_io_cbk', 'opaque'] => 'int');
     $glfs_ffi->attach(glfs_lstat => ['glfs_t', 'string', 'Stat'] => 'int');
     $glfs_ffi->attach(glfs_stat  => ['glfs_t', 'string', 'Stat'] => 'int');
     $glfs_ffi->attach(glfs_fstat => ['glfs_fd_t', 'Stat'] => 'int');
@@ -203,11 +203,11 @@ sub new
     $glfs_ffi->attach(glfs_removexattr => ['glfs_t', 'string', 'string'] => 'int');
     $glfs_ffi->attach(glfs_lremovexattr => ['glfs_t', 'string', 'string'] => 'int');
     $glfs_ffi->attach(glfs_fremovexattr => ['glfs_fd_t', 'string'] => 'int');
-    $glfs_ffi->attach(glfs_fallocate => ['glfs_fd_t', 'int', 'size_t'] => 'int');
-    $glfs_ffi->attach(glfs_discard => ['glfs_fd_t', 'int', 'size_t'] => 'int');
-    $glfs_ffi->attach(glfs_discard_async => ['glfs_fd_t', 'int', 'size_t'] => 'int');
-    $glfs_ffi->attach(glfs_zerofill => ['glfs_fd_t', 'int', 'size_t'] => 'int');
-    $glfs_ffi->attach(glfs_zerofill_async => ['glfs_fd_t', 'int', 'size_t'] => 'int');
+    $glfs_ffi->attach(glfs_fallocate => ['glfs_fd_t', 'int', 'off_t', 'size_t'] => 'int');
+    $glfs_ffi->attach(glfs_discard => ['glfs_fd_t', 'off_t', 'size_t'] => 'int');
+    $glfs_ffi->attach(glfs_discard_async => ['glfs_fd_t', 'off_t', 'size_t', 'glfs_io_cbk', 'opaque'] => 'int');
+    $glfs_ffi->attach(glfs_zerofill => ['glfs_fd_t', 'off_t', 'size_t'] => 'int');
+    $glfs_ffi->attach(glfs_zerofill_async => ['glfs_fd_t', 'off_t', 'off_t', 'glfs_io_cbk', 'opaque'] => 'int');
     $glfs_ffi->attach(glfs_getcwd => ['glfs_t', 'string', 'size_t'] => 'string');
     $glfs_ffi->attach(glfs_chdir => ['glfs_t', 'string'] => 'int');
     $glfs_ffi->attach(glfs_fchdir => ['glfs_fd_t'] => 'int');
