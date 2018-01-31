@@ -530,6 +530,22 @@ subtest 'fallocate' => sub
     system('ls -al /mnt/libgfapi-perl');
 };
 
+# discard
+subtest 'discard' => sub
+{
+    system('ls -al /mnt/libgfapi-perl');
+
+    # :TODO 2018/01/31 10:50:02 by P.G.
+    # we need to verify discarding of this range
+    my $retval = GlusterFS::GFAPI::FFI::glfs_discard($fd, 0, 128);
+
+    ok($retval == 0, sprintf('glfs_discard(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    system('ls -al /mnt/libgfapi-perl');
+};
+
 # close
 subtest 'close' => sub
 {
