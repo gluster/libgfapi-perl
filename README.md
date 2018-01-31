@@ -100,6 +100,6 @@ GlusterFS libgfapi binding for Perl 5
 | [o] | [o] | glfs_getcwd() |
 | [o] | [o] | glfs_chdir() |
 | [o] | [o] | glfs_fchdir() |
-| [o] | [x] | glfs_realpath() |
+| [o] | [o] | glfs_realpath() |
 | [o] | [x] | glfs_posix_lock() |
 | [o] | [x] | glfs_dup() |

@@ -700,6 +700,16 @@ subtest 'getcwd' => sub
     ok($cwd eq '/testdir', sprintf('glfs_getcwd(): %s', $cwd));
 };
 
+# realpath
+subtest 'realpath' => sub
+{
+    my $buffer = "\0" x 4096;
+
+    my $retval = GlusterFS::GFAPI::FFI::glfs_realpath($fs, '.', $buffer);
+
+    ok($retval, sprintf('	realpath: %s', $retval // 'undef'));
+};
+
 # opendir
 subtest 'opendir' => sub
 {
