@@ -15,6 +15,11 @@ use FFI::Platypus::Buffer;
 use FFI::Platypus::Memory   qw/strdup calloc free/;
 use FFI::Platypus::Declare;
 
+use constant
+{
+    S_IFIFO => 0010000,
+};
+
 diag('00-basic.t');
 
 use_ok('GlusterFS::GFAPI::FFI');
@@ -624,6 +629,16 @@ subtest 'readlink' => sub
     diag("error: $!") if ($retval < 0);
 
     free($buffer);
+};
+
+# mknod
+subtest 'mknod' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_mknod($fs, '/mknod', 0644, S_IFIFO | 0644);
+
+    ok($retval == 0, sprintf('glfs_mknod(): %d', $retval));
+
+    diag("error: $!") if ($retval);
 };
 
 # mkdir

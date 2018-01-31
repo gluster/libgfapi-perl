@@ -168,7 +168,7 @@ sub new
     $glfs_ffi->attach(glfs_access => ['glfs_t', 'string', 'int'] => 'int');
     $glfs_ffi->attach(glfs_symlink => ['glfs_t', 'string', 'string'] => 'int');
     $glfs_ffi->attach(glfs_readlink => ['glfs_t', 'string', 'string', 'size_t'] => 'int');
-    #$glfs_ffi->attach(glfs_mknod => ['glfs_t', 'string', 'mode_t', 'dev_t'] => 'int');
+    $glfs_ffi->attach(glfs_mknod => ['glfs_t', 'string', 'mode_t', 'dev_t'] => 'int');
     $glfs_ffi->attach(glfs_mkdir => ['glfs_t', 'string', 'unsigned short'] => 'int');
     $glfs_ffi->attach(glfs_unlink => ['glfs_t', 'string'] => 'int');
     $glfs_ffi->attach(glfs_rmdir => ['glfs_t', 'string'] => 'int');

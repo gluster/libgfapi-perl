@@ -57,7 +57,7 @@ GlusterFS libgfapi binding for Perl 5
 | [o] | [o] | glfs_access() |
 | [o] | [o] | glfs_symlink() |
 | [o] | [o] | glfs_readlink() |
-| [x] | [x] | glfs_mknod() |
+| [o] | [o] | glfs_mknod() |
 | [o] | [o] | glfs_mkdir() |
 | [o] | [o] | glfs_unlink() |
 | [o] | [o] | glfs_rmdir() |
