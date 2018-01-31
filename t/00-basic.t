@@ -692,10 +692,49 @@ subtest 'getcwd' => sub
     ok($cwd eq '/', sprintf('glfs_getcwd(): %s', $cwd));
 };
 
+my $dirloc;
+
+# telldir
+subtest 'telldir' => sub
+{
+    $dirloc = GlusterFS::GFAPI::FFI::glfs_telldir($fd);
+
+    ok($dirloc >= 0, sprintf('glfs_telldir(): %s', $dirloc));
+
+    diag("error: $!") if ($dirloc < 0);
+};
+
+# readdir
+subtest 'readdir' => sub
+{
+    my $entry = GlusterFS::GFAPI::FFI::glfs_readdir($fd);
+
+    ok(defined($entry), sprintf('glfs_readdir(): %s', $entry->d_name));
+
+    map
+    {
+        ok(defined($entry->$_)
+            , sprintf('	%s : %s', $_, $entry->$_ // 'undef'));
+    } qw/d_ino d_off d_reclen d_type/;
+};
+
+# seekdir
+subtest 'seekdir' => sub
+{
+    GlusterFS::GFAPI::FFI::glfs_seekdir($fd, $dirloc);
+
+    my $err    = $!;
+    my $retval = GlusterFS::GFAPI::FFI::glfs_telldir($fd);
+
+    ok($retval == $dirloc, sprintf('glfs_seekdir(): %s', $retval));
+
+    diag("error: $!") if ($retval != $dirloc);
+};
+
 # readdir_r
 subtest 'readdir_r' => sub
 {
-    my $entry = GlusterFS::GFAPI::FFI::Dirent->new(d_reclen => 256);
+    my $entry  = GlusterFS::GFAPI::FFI::Dirent->new(d_reclen => 256);
     my $result = GlusterFS::GFAPI::FFI::Dirent->new();
 
     while (!(my $retval
@@ -732,6 +771,56 @@ subtest 'opendir' => sub
     $fd = GlusterFS::GFAPI::FFI::glfs_opendir($fs, '/');
 
     ok($fd, sprintf('glfs_opendir(): %d', $fd));
+};
+
+# telldir
+subtest 'telldir' => sub
+{
+    $dirloc = GlusterFS::GFAPI::FFI::glfs_telldir($fd);
+
+    ok($dirloc >= 0, sprintf('glfs_telldir(): %s', $dirloc));
+
+    diag("error: $!") if ($dirloc < 0);
+};
+
+# readdirplus
+subtest 'readdirplus' => sub
+{
+    my $stat  = GlusterFS::GFAPI::FFI::Stat->new();
+    my $entry = GlusterFS::GFAPI::FFI::glfs_readdirplus($fd, $stat);
+
+    ok(defined($entry), sprintf('glfs_readdirplus(): %s', $entry->d_name));
+
+    map
+    {
+        ok(defined($entry->$_)
+            , sprintf('	%s : %s', $_, $entry->$_ // 'undef'));
+    } qw/d_ino d_off d_reclen d_type/;
+
+    ok(defined($stat), sprintf('STAT: %s', $entry->d_name));
+
+    ok(defined($stat->st_ino),     "	ino     : " . $stat->st_ino // 'undef');
+    ok(defined($stat->st_mode),    "	mode    : " . $stat->st_mode // 'undef');
+    ok(defined($stat->st_size),    "	size    : " . $stat->st_size // 'undef');
+    ok(defined($stat->st_blksize), "	blksize : " . $stat->st_blksize // 'undef');
+    ok(defined($stat->st_uid),     "	uid     : " . $stat->st_uid // 'undef');
+    ok(defined($stat->st_gid),     "	gid     : " . $stat->st_gid // 'undef');
+    ok(defined($stat->st_atime),   "	atime   : " . $stat->st_atime // 'undef');
+    ok(defined($stat->st_mtime),   "	mtime   : " . $stat->st_mtime // 'undef');
+    ok(defined($stat->st_ctime),   "	ctime   : " . $stat->st_ctime // 'undef');
+};
+
+# seekdir
+subtest 'seekdir' => sub
+{
+    GlusterFS::GFAPI::FFI::glfs_seekdir($fd, $dirloc);
+
+    my $err    = $!;
+    my $retval = GlusterFS::GFAPI::FFI::glfs_telldir($fd);
+
+    ok($retval == $dirloc, sprintf('glfs_seekdir(): %s', $retval));
+
+    diag("error: $!") if ($retval != $dirloc);
 };
 
 # readdirplus_r

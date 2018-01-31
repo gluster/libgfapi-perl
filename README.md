@@ -66,10 +66,10 @@ GlusterFS libgfapi binding for Perl 5
 | [o] | [o] | glfs_opendir() |
 | [o] | [o] | glfs_readdir_r() |
 | [o] | [o] | glfs_readdirplus_r() |
-| [o] | [x] | glfs_readdir() |
-| [o] | [x] | glfs_readdirplus() |
-| [o] | [x] | glfs_telldir() |
-| [o] | [x] | glfs_seekdir() |
+| [o] | [o] | glfs_readdir() |
+| [o] | [o] | glfs_readdirplus() |
+| [o] | [o] | glfs_telldir() |
+| [o] | [o] | glfs_seekdir() |
 | [o] | [o] | glfs_closedir() |
 | [o] | [o] | glfs_statvfs() |
 | [o] | [o] | glfs_chmod() |
