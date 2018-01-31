@@ -4,12 +4,14 @@ use strict;
 use warnings;
 use utf8;
 
-use POSIX       qw/:fcntl_h/;
+use POSIX           qw/:fcntl_h/;
+use Scalar::Util    qw/weaken/;
 use Test::Most;
 use Data::Dumper;
 use Devel::Peek;
 
 use FFI::Platypus;
+use FFI::Platypus::Buffer;
 use FFI::Platypus::Memory   qw/strdup calloc free/;
 use FFI::Platypus::Declare;
 
@@ -79,7 +81,7 @@ subtest 'get_volumeid' => sub
 
     cmp_ok($retval, '==', $len, sprintf('glfs_get_volumeid(): %d', $retval));
 
-    diag("error: $!") if ($retval);
+    diag("error: $!") if ($retval != $len);
 
     cmp_ok($id, 'eq', $expected, sprintf('	Volume ID : %s', $id // 'undef'));
 };
@@ -644,12 +646,50 @@ subtest 'mkdir' => sub
     } qw/a b c d/;
 };
 
+# chdir
+subtest 'chdir' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_chdir($fs, '/testdir');
+
+    ok($retval == 0, sprintf('glfs_chdir(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
+# getcwd
+subtest 'getcwd' => sub
+{
+    my $buffer = "\0" x 4096;
+    my $cwd    = GlusterFS::GFAPI::FFI::glfs_getcwd($fs, $buffer, 4096);
+
+    ok($cwd eq '/testdir', sprintf('glfs_getcwd(): %s', $cwd));
+};
+
 # opendir
 subtest 'opendir' => sub
 {
     $fd = GlusterFS::GFAPI::FFI::glfs_opendir($fs, '/');
 
     ok(defined($fd), sprintf('glfs_opendir(): %s', $fd // 'undef'));
+};
+
+# fchdir
+subtest 'fchdir' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_fchdir($fd);
+
+    ok($retval == 0, sprintf('glfs_fchdir(): %s', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
+# getcwd
+subtest 'getcwd' => sub
+{
+    my $buffer = "\0" x 4096;
+    my $cwd    = GlusterFS::GFAPI::FFI::glfs_getcwd($fs, $buffer, 4096);
+
+    ok($cwd eq '/', sprintf('glfs_getcwd(): %s', $cwd));
 };
 
 # readdir_r

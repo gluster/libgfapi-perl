@@ -174,7 +174,7 @@ sub new
     $glfs_ffi->attach(glfs_rmdir => ['glfs_t', 'string'] => 'int');
     $glfs_ffi->attach(glfs_rename => ['glfs_t', 'string', 'string'] => 'int');
     $glfs_ffi->attach(glfs_link => ['glfs_t', 'string', 'string'] => 'int');
-    $glfs_ffi->attach(glfs_opendir => ['glfs_t', 'string'] => 'opaque');
+    $glfs_ffi->attach(glfs_opendir => ['glfs_t', 'string'] => 'glfs_fd_t');
     $glfs_ffi->attach(glfs_readdir_r => ['glfs_fd_t', 'Dirent', 'opaque*'] => 'int');
     $glfs_ffi->attach(glfs_readdirplus_r => ['glfs_fd_t', 'Stat', 'Dirent', 'opaque*'] => 'int');
     $glfs_ffi->attach(glfs_readdir => ['glfs_fd_t'] => 'Dirent');
