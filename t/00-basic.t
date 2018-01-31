@@ -604,6 +604,16 @@ subtest 'access' => sub
     return;
 };
 
+# link
+subtest 'link' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_link($fs, "${fname}", "/${fname}_hardlink");
+
+    ok($retval == 0, sprintf('glfs_link(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
 # symlink
 subtest 'symlink' => sub
 {
