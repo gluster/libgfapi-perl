@@ -72,6 +72,24 @@ record_layout(qw/
     size_t  iov_len
 /);
 
+package GlusterFS::GFAPI::FFI::Flock;
+
+use FFI::Platypus::Record;
+
+record_layout(qw/
+    short   l_type
+    short   l_whence
+    off_t   l_start
+    off_t   l_len
+    sint32  l_pid
+/);
+
+# /* Type of lock: F_RDLCK, F_WRLCK, F_UNLCK */
+# /* How to interpret l_start: SEEK_SET, SEEK_CUR, SEEK_END */
+# /* Starting offset for lock */
+# /* Number of bytes to lock */
+# /* PID of process blocking our lock (set by F_GETLK and F_OFD_GETLK) */
+
 package GlusterFS::GFAPI::FFI;
 
 BEGIN
@@ -110,6 +128,7 @@ sub new
     $glfs_ffi->type('record(GlusterFS::GFAPI::FFI::Dirent)'    => 'Dirent');
     $glfs_ffi->type('record(GlusterFS::GFAPI::FFI::Timespecs)' => 'Timespecs');
     $glfs_ffi->type('record(GlusterFS::GFAPI::FFI::Iovec)'     => 'Iovec');
+    $glfs_ffi->type('record(GlusterFS::GFAPI::FFI::Flock)'     => 'Flock');
 
     # Closure
     $glfs_ffi->type('(glfs_fd_t, ssize_t, opaque)->opaque', 'glfs_io_cbk');
@@ -212,7 +231,7 @@ sub new
     $glfs_ffi->attach(glfs_chdir => ['glfs_t', 'string'] => 'int');
     $glfs_ffi->attach(glfs_fchdir => ['glfs_fd_t'] => 'int');
     $glfs_ffi->attach(glfs_realpath => ['glfs_t', 'string', 'string'] => 'string');
-    $glfs_ffi->attach(glfs_posix_lock => ['glfs_fd_t', 'int', 'opaque'] => 'int');
+    $glfs_ffi->attach(glfs_posix_lock => ['glfs_fd_t', 'int', 'Flock'] => 'int');
     $glfs_ffi->attach(glfs_dup => ['glfs_fd_t'] => 'glfs_fd_t');
 
     my %attrs = ();

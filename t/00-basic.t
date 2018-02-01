@@ -313,6 +313,33 @@ subtest 'futimens' => sub
     cmp_ok($stat->st_mtime, '==', $ts, "modification time validation");
 };
 
+# posix_lock
+subtest 'posix_lock' => sub
+{
+    my $flock = GlusterFS::GFAPI::FFI::Flock->new(
+        l_type   => F_WRLCK,
+        l_whence => SEEK_SET,
+        l_start  => 0,
+        l_len    => 0,
+    );
+
+    my $retval = GlusterFS::GFAPI::FFI::glfs_posix_lock($fd, F_SETLKW, $flock);
+
+    ok($retval == 0, sprintf('glfs_posix_lock(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
+# dup
+subtest 'dup' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_dup($fd);
+
+    ok($retval >= 0, sprintf('glfs_dup(): %d', $retval));
+
+    diag("error: $!") if ($retval < 0);
+};
+
 # write
 subtest 'write' => sub
 {
