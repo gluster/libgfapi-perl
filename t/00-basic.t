@@ -586,6 +586,168 @@ subtest 'zerofill' => sub
     diag("error: $!") if ($retval);
 };
 
+# setxattr
+subtest 'setxattr' => sub
+{
+    my $name   = 'user.key1';
+    my $value  = strdup('hello');
+    my $retval = GlusterFS::GFAPI::FFI::glfs_setxattr($fs, "/${fname}", $name, $value, length('hello'), 0);
+
+    ok($retval == 0, sprintf('setxattr: %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    free($value);
+};
+
+# getxattr
+subtest 'getxattr' => sub
+{
+    my $name   = 'user.key1';
+    my $value  = calloc(1, 256);
+    my $retval = GlusterFS::GFAPI::FFI::glfs_getxattr($fs, "/${fname}", $name, $value, 256);
+
+    ok($retval == length('hello'), sprintf('getxattr: %d', $retval));
+
+    diag("error: $!") if ($retval != length('hello'));
+
+    ok(cast('opaque' => 'string', $value) eq 'hello',
+        sprintf('	key1 : %s',
+            $value ? cast('opaque' => 'string', $value) : 'undef'));
+
+    free($value);
+};
+
+# listxattr
+subtest 'listxattr' => sub
+{
+    my $buffer = calloc(1, 4096);
+    my $retval = GlusterFS::GFAPI::FFI::glfs_listxattr($fs, "/${fname}", $buffer, 4096);
+
+    ok($retval >= 0, sprintf('listxattr: %d', $retval));
+
+    diag("error: $!") if ($retval < 0);
+};
+
+# removexattr
+subtest 'removexattr' => sub
+{
+    my $name   = 'user.key1';
+    my $retval = GlusterFS::GFAPI::FFI::glfs_removexattr($fs, "/${fname}", $name);
+
+    ok($retval == 0, sprintf('removexattr: %d', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
+# lsetxattr
+subtest 'lsetxattr' => sub
+{
+    my $name   = 'user.key2';
+    my $value  = strdup('hello');
+    my $retval = GlusterFS::GFAPI::FFI::glfs_lsetxattr($fs, "/${fname}", $name, $value, length('hello'), 0);
+
+    ok($retval == 0, sprintf('lsetxattr: %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    free($value);
+};
+
+# lgetxattr
+subtest 'lgetxattr' => sub
+{
+    my $name   = 'user.key2';
+    my $value  = calloc(1, 256);
+    my $retval = GlusterFS::GFAPI::FFI::glfs_lgetxattr($fs, "/${fname}", $name, $value, 256);
+
+    ok($retval == length('hello'), sprintf('lgetxattr: %d', $retval));
+
+    diag("error: $!") if ($retval != length('hello'));
+
+    ok(cast('opaque' => 'string', $value) eq 'hello',
+        sprintf('	key2 : %s',
+            $value ? cast('opaque' => 'string', $value) : 'undef'));
+
+    free($value);
+};
+
+# llistxattr
+subtest 'llistxattr' => sub
+{
+    my $buffer = calloc(1, 4096);
+    my $retval = GlusterFS::GFAPI::FFI::glfs_llistxattr($fs, "/${fname}", $buffer, 4096);
+
+    ok($retval >= 0, sprintf('llistxattr: %d', $retval));
+
+    diag("error: $!") if ($retval < 0);
+};
+
+# lremovexattr
+subtest 'lremovexattr' => sub
+{
+    my $name   = 'user.key2';
+    my $retval = GlusterFS::GFAPI::FFI::glfs_lremovexattr($fs, "/${fname}", $name);
+
+    ok($retval == 0, sprintf('lremovexattr: %d', $retval // 'undef'));
+
+    diag("error: $!") if ($retval);
+};
+
+# fsetxattr
+subtest 'fsetxattr' => sub
+{
+    my $name   = 'user.key3';
+    my $value  = strdup('hello');
+    my $retval = GlusterFS::GFAPI::FFI::glfs_fsetxattr($fd, $name, $value, length('hello'), 0);
+
+    ok($retval == 0, sprintf('fsetxattr: %d', $retval));
+
+    diag("error: $!") if ($retval);
+
+    free($value);
+};
+
+# fgetxattr
+subtest 'fgetxattr' => sub
+{
+    my $name   = 'user.key3';
+    my $value  = calloc(1, 256);
+    my $retval = GlusterFS::GFAPI::FFI::glfs_fgetxattr($fd, $name, $value, 256);
+
+    ok($retval == length('hello'), sprintf('fgetxattr: %d', $retval));
+
+    diag("error: $!") if ($retval != length('hello'));
+
+    ok(cast('opaque' => 'string', $value) eq 'hello',
+        sprintf('	key3 : %s',
+            $value ? cast('opaque' => 'string', $value) : 'undef'));
+
+    free($value);
+};
+
+# flistxattr
+subtest 'flistxattr' => sub
+{
+    my $buffer = calloc(1, 4096);
+    my $retval = GlusterFS::GFAPI::FFI::glfs_flistxattr($fd, $buffer, 4096);
+
+    ok($retval >= 0, sprintf('flistxattr: %d', $retval));
+
+    diag("error: $!") if ($retval < 0);
+};
+
+# fremovexattr
+subtest 'fremovexattr' => sub
+{
+    my $name   = 'user.key3';
+    my $retval = GlusterFS::GFAPI::FFI::glfs_fremovexattr($fd, $name);
+
+    ok($retval == 0, sprintf('fremovexattr: %d', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
 # close
 subtest 'close' => sub
 {
@@ -743,6 +905,8 @@ subtest 'opendir' => sub
     $fd = GlusterFS::GFAPI::FFI::glfs_opendir($fs, '/');
 
     ok(defined($fd), sprintf('glfs_opendir(): %s', $fd // 'undef'));
+
+    diag("error: $!") if (!defined($fd));
 };
 
 # fchdir
