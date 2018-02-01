@@ -1,8 +1,8 @@
-# libgfapi-perl
-
-[![Build Status](https://travis-ci.org/potatogim/libgfapi-perl.svg?branch=master)](https://travis-ci.org/potatogim/libgfapi-perl)
+# libgfapi-perl [![Build Status](https://travis-ci.org/potatogim/libgfapi-perl.svg?branch=master)](https://travis-ci.org/potatogim/libgfapi-perl)
 
 GlusterFS libgfapi binding for Perl 5
+
+The libgfapi-perl provides declarations and linkage for the Gluster gfapi C library with FFI for many Perl mongers.
 
 ## Facilities
 
@@ -103,3 +103,4 @@ GlusterFS libgfapi binding for Perl 5
 | [o] | [o] | glfs_realpath() |
 | [o] | [o] | glfs_posix_lock() |
 | [o] | [o] | glfs_dup() |
+
