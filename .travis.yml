@@ -2,6 +2,7 @@ branches:
     only:
         - master
         - /^v\d/
+        - /-dev$/
 
 notifications:
         email: false
