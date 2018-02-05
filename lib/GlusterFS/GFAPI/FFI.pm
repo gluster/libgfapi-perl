@@ -301,8 +301,68 @@ sub new
     $FFI->attach(glfs_pread_async => ['glfs_fd_t', 'opaque', 'size_t', 'off_t', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
     $FFI->attach(glfs_pwrite_async => ['glfs_fd_t', 'opaque', 'size_t', 'off_t', 'int', 'glfs_io_cbk', 'opaque'] => 'int');
 
-    $FFI->attach(glfs_preadv => ['glfs_fd_t', 'Iovec', 'size_t', 'int'] => 'int');
-    $FFI->attach(glfs_pwritev => ['glfs_fd_t', 'Iovec', 'size_t', 'int'] => 'int');
+    $FFI->attach(glfs_preadv => ['glfs_fd_t', 'opaque', 'int', 'off_t', 'int'] => 'ssize_t'
+        , sub {
+            my ($sub, $fd, $lengths, $offset, $flags) = @_;
+
+            my $vsize = $FFI->sizeof('Iovec');
+            my $psize = $FFI->sizeof('opaque');
+            my $count = scalar(@{$lengths});
+
+            # 버퍼 할당
+            my @data   = ();
+            my $buffer = calloc($count, $vsize);
+            my @ptrs   = ();
+
+            for (my $i=0; $i<$count; $i++)
+            {
+                $data[$i]      = "\0" x $lengths->[$i];
+                $lengths->[$i] = pack('L!', $lengths->[$i]);
+
+                my $p_base  = pack('P', $data[$i]);
+                my $p_len   = pack('P', $lengths->[$i]);
+                my $pp_base = pack('P', $p_base);
+
+                push(@ptrs, $p_base, $p_len, $pp_base);
+
+                memcpy($buffer + ($i * $vsize), unpack('L!', $pp_base), $psize);
+                memcpy($buffer + ($i * $vsize) + $psize, unpack('L!', $p_len), $psize);
+            }
+
+            # readv 호출
+            my $retval = $sub->($fd, $buffer, $count, $offset, $flags);
+
+            free($buffer);
+
+            return $retval, @data;
+        });
+    $FFI->attach(glfs_pwritev => ['glfs_fd_t', 'opaque', 'int', 'off_t', 'int'] => 'ssize_t'
+        , sub {
+            my ($sub, $fd, $vectors, $offset, $flags) = @_;
+
+            my $vsize = $FFI->sizeof('Iovec');
+            my $psize = $FFI->sizeof('opaque');
+            my $count = scalar(@{$vectors});
+
+            my $buffer = calloc($count, $vsize);
+
+            for (my $i=0; $i<$count; $i++)
+            {
+                my ($buf_len, $sz_len) = scalar_to_buffer(pack('L!', length($vectors->[$i])));
+
+                my $ptr  = pack('P', $vectors->[$i]);
+                my $pptr = pack('P', $ptr);
+
+                memcpy($buffer + ($vsize * $i), unpack('L!', $pptr), $psize);
+                memcpy($buffer + ($vsize * $i) + $psize, $buf_len, $sz_len);
+            }
+
+            my $retval = $sub->($fd, $buffer, $count, $offset, $flags);
+
+            free($buffer);
+
+            return $retval;
+        });
     $FFI->attach(glfs_preadv_async => ['glfs_fd_t', 'Iovec', 'int', 'int', 'int', 'off_t', 'glfs_io_cbk', 'opaque'] => 'ssize_t');
     $FFI->attach(glfs_pwritev_async => ['glfs_fd_t', 'Iovec', 'int', 'int', 'int', 'off_t', 'glfs_io_cbk', 'opaque'] => 'ssize_t');
 

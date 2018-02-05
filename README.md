@@ -29,8 +29,6 @@ sudo yum -y install glusterfs-devel glusterfs-api-devel
 | [x] | [x] | glfs_writev_async() |
 | [x] | [x] | glfs_pread_async() |
 | [x] | [x] | glfs_pwrite_async() |
-| [x] | [x] | glfs_preadv() |
-| [x] | [x] | glfs_pwritev() |
 | [x] | [x] | glfs_preadv_async() |
 | [x] | [x] | glfs_pwritev_async() |
 | [x] | [x] | glfs_ftruncate_async() |
