@@ -275,16 +275,21 @@ sub new
             my $count = scalar(@{$vectors});
 
             my $buffer = calloc($count, $vsize);
+            my @len    = ();
+            my @ptrs   = ();
 
             for (my $i=0; $i<$count; $i++)
             {
-                my ($buf_len, $sz_len) = scalar_to_buffer(pack('L!', length($vectors->[$i])));
+                $len[$i] = pack('L!', length($vectors->[$i]));
 
-                my $ptr  = pack('P', $vectors->[$i]);
-                my $pptr = pack('P', $ptr);
+                my $p_base  = pack('P', $vectors->[$i]);
+                my $p_len   = pack('P', $len[$i]);
+                my $pp_base = pack('P', $p_base);
 
-                memcpy($buffer + ($vsize * $i), unpack('L!', $pptr), $psize);
-                memcpy($buffer + ($vsize * $i) + $psize, $buf_len, $sz_len);
+                push(@ptrs, $p_base, $p_len, $pp_base);
+
+                memcpy($buffer + ($vsize * $i), unpack('L!', $pp_base), $psize);
+                memcpy($buffer + ($vsize * $i) + $psize, unpack('L!', $p_len), length($len[$i]));
             }
 
             my $retval = $sub->($fd, $buffer, $count, $flags);
@@ -345,16 +350,21 @@ sub new
             my $count = scalar(@{$vectors});
 
             my $buffer = calloc($count, $vsize);
+            my @len    = ();
+            my @ptrs   = ();
 
             for (my $i=0; $i<$count; $i++)
             {
-                my ($buf_len, $sz_len) = scalar_to_buffer(pack('L!', length($vectors->[$i])));
+                $len[$i] = pack('L!', length($vectors->[$i]));
 
-                my $ptr  = pack('P', $vectors->[$i]);
-                my $pptr = pack('P', $ptr);
+                my $p_base  = pack('P', $vectors->[$i]);
+                my $p_len   = pack('P', $len[$i]);
+                my $pp_base = pack('P', $p_base);
 
-                memcpy($buffer + ($vsize * $i), unpack('L!', $pptr), $psize);
-                memcpy($buffer + ($vsize * $i) + $psize, $buf_len, $sz_len);
+                push(@ptrs, $p_base, $p_len, $pp_base);
+
+                memcpy($buffer + ($vsize * $i), unpack('L!', $pp_base), $psize);
+                memcpy($buffer + ($vsize * $i) + $psize, unpack('L!', $p_len), length($len[$i]));
             }
 
             my $retval = $sub->($fd, $buffer, $count, $offset, $flags);
