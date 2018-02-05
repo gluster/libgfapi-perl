@@ -196,7 +196,8 @@ sub test_libgfapi
     my $retval = run_cmd(
                     cmd    => 'make test TEST_VERBOSE=1',
                     cb_out => sub { print STDOUT "$_\n"; },
-                    cb_err => sub { print STDOUT "$_\n"; });
+                    cb_err => sub { print STDERR "$_\n"; });
+
 
     if (!defined($retval) || $retval->{status})
     {

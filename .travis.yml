@@ -49,4 +49,6 @@ install:
     - cpanm --quiet --notest --skip-satisfied --installdeps .
 
 script:
-    - perl .TRAVIS.PL 2>&1
+    - perl Makefile.PL
+    - make test TEST_VERBOSE=1
+#    - perl .TRAVIS.PL 2>&1
