@@ -36,7 +36,7 @@ has 'cursor' =>
 
 
 #---------------------------------------------------------------------------
-#   Methods
+#   Contructor/Destructor
 #---------------------------------------------------------------------------
 sub BUILD
 {
@@ -46,6 +46,20 @@ sub BUILD
     $self->_set_cursor(GlusterFS::GFAPI::FFI::Dirent->new());
 }
 
+sub DEMOLISH
+{
+    my ($self, $is_global) = @_;
+
+    if (glfs_closedir($self->fd))
+    {
+        confess($!);
+    }
+}
+
+
+#---------------------------------------------------------------------------
+#   Methods
+#---------------------------------------------------------------------------
 sub next
 {
     my $self = shift;
@@ -77,16 +91,6 @@ sub next
     }
 
     return $self->readdirplus ? ($entry, $stat) : $entry;
-}
-
-sub DEMOLISH
-{
-    my ($self, $is_global) = @_;
-
-    if (glfs_closedir($self->fd))
-    {
-        confess($!);
-    }
 }
 
 1;
