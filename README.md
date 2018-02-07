@@ -6,6 +6,16 @@ The libgfapi-perl provides declarations and linkage for the Gluster gfapi C libr
 
 To use it, you can use test code that exists under 't/' directory for reference.
 
+## Pre-installed requirements
+
+This binding is using libgfapi. It means that you should install libraries before using this.
+
+
+Please follow steps;
+```sh
+sudo yum -y install glusterfs-devel glusterfs-api-devel
+```
+
 ## Not yet supported
 
 | Supported | Verified | Function |
