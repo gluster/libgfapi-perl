@@ -18,21 +18,35 @@ sudo yum -y install glusterfs-devel glusterfs-api-devel
 
 ## Not yet supported
 
-| Supported | Verified | Function |
-|:---------:|:--------:| -------- |
-| [o] | [x] | glfs_setfsuid() |
-| [o] | [x] | glfs_setfsgid() |
-| [o] | [x] | glfs_setfsgroups() |
-| [x] | [x] | glfs_read_async() |
-| [x] | [x] | glfs_write_async() |
-| [x] | [x] | glfs_readv_async() |
-| [x] | [x] | glfs_writev_async() |
-| [x] | [x] | glfs_pread_async() |
-| [x] | [x] | glfs_pwrite_async() |
-| [x] | [x] | glfs_preadv_async() |
-| [x] | [x] | glfs_pwritev_async() |
-| [x] | [x] | glfs_ftruncate_async() |
-| [x] | [x] | glfs_fsync_async() |
-| [x] | [x] | glfs_fdatasync_async() |
-| [x] | [x] | glfs_discard_async() |
-| [x] | [x] | glfs_zerofill_async() |
+### Asynchronous I/O
+
+libgfapi-perl does not support some asynchronous I/O functions that using closure(callback) yet.
+
+* ```glfs_read_async()```
+* ```glfs_write_async()```
+* ```glfs_readv_async()```
+* ```glfs_writev_async()```
+* ```glfs_pread_async()```
+* ```glfs_pwrite_async()```
+* ```glfs_preadv_async()```
+* ```glfs_pwritev_async()```
+* ```glfs_ftruncate_async()```
+* ```glfs_fsync_async()```
+* ```glfs_fdatasync_async()```
+* ```glfs_discard_async()```
+* ```glfs_zerofill_async()```
+
+## AUTHOR
+
+Author: Ji-Hyeon Gim ([@potatogim](https://github.com/potatogim))
+
+Contributors
+
+- 
+
+## COPYRIGHT AND LICENSE
+
+This software is copyright 2017-2018 by Ji-Hyeon Gim.
+
+This is free software; you can redistribute it and/or modify it under the same terms as the GPLv2/LGPLv3.
+
