@@ -15,6 +15,8 @@ use GlusterFS::GFAPI::FFI;
 use GlusterFS::GFAPI::FFI::Util qw/libgfapi_soname/;
 use Carp;
 
+use overload '""' => 'stringify';
+
 
 #---------------------------------------------------------------------------
 #   Attributes
@@ -129,6 +131,13 @@ sub inode
     my %args = @_;
 
     return $self->lstat->st_ino;
+}
+
+sub stringify
+{
+    my $self = shift;
+
+    return sprintf('<{%s}: {%s}>', __PACKAGE__, $self->name);
 }
 
 1;
