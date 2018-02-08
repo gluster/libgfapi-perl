@@ -19,9 +19,14 @@ use Carp;
 #---------------------------------------------------------------------------
 #   Attributes
 #---------------------------------------------------------------------------
-has 'fd' =>
+has 'api' =>
 (
     is => 'rwp',
+);
+
+has 'fd' =>
+(
+    is => 'rw',
 );
 
 has 'readdirplus' =>
@@ -43,6 +48,9 @@ sub BUILD
     my $self = shift;
     my $args = shift;
 
+    $self->_set_api($args->{api});
+    $self->fd($args->{fd});
+    $self->readdirplus($args->{readdirplus} // 0);
     $self->_set_cursor(GlusterFS::GFAPI::FFI::Dirent->new());
 }
 
@@ -50,10 +58,12 @@ sub DEMOLISH
 {
     my ($self, $is_global) = @_;
 
-    if (glfs_closedir($self->fd))
+    if (GlusterFS::GFAPI::FFI::glfs_closedir($self->fd))
     {
         confess($!);
     }
+
+    $self->_set_api(undef);
 }
 
 
@@ -73,11 +83,11 @@ sub next
     if ($self->readdirplus)
     {
         $stat = GlusterFS::GFAPI::FFI::Stat->new();
-        $ret  = glfs_readdirplus_r($self->fd, $stat, $entry, $self->cursor);
+        $ret  = glfs_readdirplus_r($self->fd, $stat, $entry, \$self->cursor);
     }
     else
     {
-        $ret = glfs_readdir_r($self->fd, $entry, $self->cursor);
+        $ret = GlusterFS::GFAPI::FFI::glfs_readdir_r($self->fd, $entry, \$self->cursor);
     }
 
     if ($ret != 0)
@@ -85,7 +95,8 @@ sub next
         confess($!);
     }
 
-    if (!defined($self->cursor) || !defined($self->cursor->contents))
+    #if (!defined($self->cursor) || !defined($self->cursor->contents))
+    if (!defined($self->cursor))
     {
         confess('StopIteration');
     }

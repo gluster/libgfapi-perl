@@ -29,12 +29,12 @@ has 'vol' =>
     is => 'rwp',
 );
 
-has '_lstat' =>
+has 'lstat' =>
 (
     is => 'rwp',
 );
 
-has '_stat' =>
+has 'stat' =>
 (
     is => 'rwp',
 );
@@ -51,9 +51,13 @@ has 'path' =>
 sub BUILD
 {
     my $self = shift;
-    my %args = @_;
+    my $args = shift;
 
-    $self->_set_path(join('/', ''));
+    $self->_set_name($args->{name});
+    $self->_set_vol($args->{vol});
+    $self->_set_lstat($args->{lstat});
+    $self->_set_stat(undef);
+    $self->_set_path(join('/', $args->{name}));
 }
 
 
@@ -67,7 +71,7 @@ sub stat
 
     if ($args{follow_symlinks})
     {
-        if (!defined($self->_stat))
+        if (!defined($self->stat))
         {
             if ($self->is_symlink)
             {
@@ -75,14 +79,14 @@ sub stat
             }
             else
             {
-                $self->_set_stat($self->_lstat);
+                $self->_set_stat($self->lstat);
             }
         }
 
-        return $self->_stat;
+        return $self->stat;
     }
 
-    return $self->_lstat;
+    return $self->lstat;
 }
 
 sub is_dir
@@ -95,7 +99,7 @@ sub is_dir
         return S_ISDIR($self->stat(follow_symlinks => 1)->st_mode);
     }
 
-    return S_ISDIR($self->_lstat->st_mode);
+    return S_ISDIR($self->lstat->st_mode);
 }
 
 sub is_file
@@ -108,7 +112,7 @@ sub is_file
         return S_ISREG($self->stat(follow_symlinks => 1)->st_mode);
     }
 
-    return S_ISREG($self->_lstat->st_mode);
+    return S_ISREG($self->lstat->st_mode);
 }
 
 sub is_symlink
@@ -116,7 +120,7 @@ sub is_symlink
     my $self = shift;
     my %args = @_;
 
-    return S_ISLNK($self->_lstat->st_mode);
+    return S_ISLNK($self->lstat->st_mode);
 }
 
 sub inode
@@ -124,7 +128,7 @@ sub inode
     my $self = shift;
     my %args = @_;
 
-    return $self->_lstat->st_ino;
+    return $self->lstat->st_ino;
 }
 
 1;

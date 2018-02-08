@@ -41,11 +41,11 @@ has 'mode' =>
 sub BUILD
 {
     my $self = shift;
-    my %args = @_;
+    my $args = shift;
 
-    $self->_set_fd($args{fd});
-    $self->_set_originalpath($args{path} // undef);
-    $self->_set_mode($args{mode} // undef);
+    $self->_set_fd($args->{fd});
+    $self->_set_originalpath($args->{path} // undef);
+    $self->_set_mode($args->{mode} // undef);
 
     $self->_validate_init();
 
