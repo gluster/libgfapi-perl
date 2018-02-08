@@ -42,7 +42,7 @@ Author: Ji-Hyeon Gim ([@potatogim](https://github.com/potatogim))
 
 Contributors
 
-- 
+- Tae-Hwa Lee ([@alghost](https://github.com/alghost))
 
 ## COPYRIGHT AND LICENSE
 
