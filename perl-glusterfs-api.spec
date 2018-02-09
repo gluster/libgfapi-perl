@@ -10,7 +10,7 @@ License:        GPLv2 or LGPLv3+
 Group:          System Environment/Libraries
 Vendor:         Gluster Community
 URL:            https://github.com/gluster/libgfapi-perl
-Source0:        https://test.com/%{perl_package_name}-%{version}.tar.gz
+Source0:        %{perl_package_name}-%{version}.tar.gz
 
 BuildArch:      noarch
 

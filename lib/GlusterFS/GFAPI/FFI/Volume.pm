@@ -3,7 +3,7 @@ package GlusterFS::GFAPI::FFI::Volume;
 BEGIN
 {
     our $AUTHOR  = 'cpan:potatogim';
-    our $VERSION = '0.01';
+    our $VERSION = '0.3';
 }
 
 use strict;
@@ -21,7 +21,6 @@ use List::MoreUtils             qw/natatime/;
 use Generator::Object;
 use Try::Tiny;
 use Carp;
-use Data::Dumper;
 
 use constant
 {

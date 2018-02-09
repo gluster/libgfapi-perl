@@ -50,5 +50,5 @@ install:
 
 script:
     - perl Makefile.PL
-    - make test TEST_VERBOSE=1
+    - make && make test TEST_VERBOSE=1
 #    - perl .TRAVIS.PL 2>&1
