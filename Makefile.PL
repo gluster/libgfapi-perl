@@ -5,7 +5,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME               => 'GlusterFS::GFAPI::FFI',
     DISTNAME           => 'GlusterFS-GFAPI-FFI',
-    AUTHOR             => 'Ji-Hyeon Gim <potatogim@potatogim.net>',
+    AUTHOR             => 'Ji-Hyeon Gim <potatogim@gluesys.com>',
     VERSION_FROM       => 'lib/GlusterFS/GFAPI/FFI.pm',
     ABSTRACT_FROM      => 'lib/GlusterFS/GFAPI/FFI.pm',
     LICENSE            => 'perl',
