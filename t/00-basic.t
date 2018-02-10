@@ -378,6 +378,74 @@ subtest 'read' => sub
     free($buffer);
 };
 
+# lseek
+subtest 'lseek' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_lseek($fd, 0, 0);
+
+    ok($retval == 0, sprintf('glfs_lseek(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
+# writev
+subtest 'writev' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_writev($fd, ['hello', 'gfapi'], 0);
+
+    ok($retval > 0, sprintf('glfs_writev(): %d', $retval));
+
+    diag("error: $!") if ($retval < 0);
+};
+
+# lseek
+subtest 'lseek' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_lseek($fd, 0, 0);
+
+    ok($retval == 0, sprintf('glfs_lseek(): %d', $retval));
+
+    diag("error: $!") if ($retval);
+};
+
+# readv
+subtest 'readv' => sub
+{
+    my ($retval, @data) = GlusterFS::GFAPI::FFI::glfs_readv($fd, [5, 5], 0);
+
+    ok($retval > 0, sprintf('glfs_readv(): %d', $retval));
+
+    ok(@data == 2, sprintf('	number of data : %d', scalar(@data)));
+    ok($data[0] eq 'hello', sprintf('		data[0] : %s', $data[0]));
+    ok($data[1] eq 'gfapi', sprintf('		data[1] : %s', $data[1]));
+
+    diag("error: $!") if (@data != 2);
+};
+
+# pwritev
+subtest 'pwritev' => sub
+{
+    my $retval = GlusterFS::GFAPI::FFI::glfs_pwritev($fd, ['hello', 'gfapi'], 10, 0);
+
+    ok($retval > 0, sprintf('glfs_pwritev(): %d', $retval));
+
+    diag("error: $!") if ($retval < 0);
+};
+
+# preadv
+subtest 'preadv' => sub
+{
+    my ($retval, @data) = GlusterFS::GFAPI::FFI::glfs_preadv($fd, [5, 5], 10, 0);
+
+    ok($retval > 0, sprintf('glfs_preadv(): %d', $retval));
+
+    ok(@data == 2, sprintf('	number of data : %d', scalar(@data)));
+    ok($data[0] eq 'hello', sprintf('		data[0] : %s', $data[0]));
+    ok($data[1] eq 'gfapi', sprintf('		data[1] : %s', $data[1]));
+
+    diag("error: $!") if (@data != 2);
+};
+
 # truncate
 subtest 'truncate' => sub
 {

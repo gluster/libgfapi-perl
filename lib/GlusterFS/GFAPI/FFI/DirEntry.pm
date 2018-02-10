@@ -3,7 +3,7 @@ package GlusterFS::GFAPI::FFI::DirEntry;
 BEGIN
 {
     our $AUTHOR  = 'cpan:potatogim';
-    our $VERSION = '0.01';
+    our $VERSION = '0.3';
 }
 
 use strict;
@@ -14,6 +14,8 @@ use Moo;
 use GlusterFS::GFAPI::FFI;
 use GlusterFS::GFAPI::FFI::Util qw/libgfapi_soname/;
 use Carp;
+
+use overload '""' => 'stringify';
 
 
 #---------------------------------------------------------------------------
@@ -29,12 +31,12 @@ has 'vol' =>
     is => 'rwp',
 );
 
-has '_lstat' =>
+has 'lstat' =>
 (
     is => 'rwp',
 );
 
-has '_stat' =>
+has 'stat' =>
 (
     is => 'rwp',
 );
@@ -46,16 +48,24 @@ has 'path' =>
 
 
 #---------------------------------------------------------------------------
-#   Methods
+#   Constructor/Destructor
 #---------------------------------------------------------------------------
-sub new
+sub BUILD
 {
-    my $class = shift;
-    my %args  = @_;
+    my $self = shift;
+    my $args = shift;
 
-    $self->_set_path(join('/', ''));
+    $self->_set_name($args->{name});
+    $self->_set_vol($args->{vol});
+    $self->_set_lstat($args->{lstat});
+    $self->_set_stat(undef);
+    $self->_set_path(join('/', $args->{name}));
 }
 
+
+#---------------------------------------------------------------------------
+#   Methods
+#---------------------------------------------------------------------------
 sub stat
 {
     my $self = shift;
@@ -63,7 +73,7 @@ sub stat
 
     if ($args{follow_symlinks})
     {
-        if (!defined($self->_stat))
+        if (!defined($self->stat))
         {
             if ($self->is_symlink)
             {
@@ -71,14 +81,14 @@ sub stat
             }
             else
             {
-                $self->_set_stat($self->_lstat);
+                $self->_set_stat($self->lstat);
             }
         }
 
-        return $self->_stat;
+        return $self->stat;
     }
 
-    return $self->_lstat;
+    return $self->lstat;
 }
 
 sub is_dir
@@ -91,7 +101,7 @@ sub is_dir
         return S_ISDIR($self->stat(follow_symlinks => 1)->st_mode);
     }
 
-    return S_ISDIR($self->_lstat->st_mode);
+    return S_ISDIR($self->lstat->st_mode);
 }
 
 sub is_file
@@ -104,7 +114,7 @@ sub is_file
         return S_ISREG($self->stat(follow_symlinks => 1)->st_mode);
     }
 
-    return S_ISREG($self->_lstat->st_mode);
+    return S_ISREG($self->lstat->st_mode);
 }
 
 sub is_symlink
@@ -112,7 +122,7 @@ sub is_symlink
     my $self = shift;
     my %args = @_;
 
-    return S_ISLNK($self->_lstat->st_mode);
+    return S_ISLNK($self->lstat->st_mode);
 }
 
 sub inode
@@ -120,7 +130,14 @@ sub inode
     my $self = shift;
     my %args = @_;
 
-    return $self->_lstat->st_ino;
+    return $self->lstat->st_ino;
+}
+
+sub stringify
+{
+    my $self = shift;
+
+    return sprintf('<{%s}: {%s}>', __PACKAGE__, $self->name);
 }
 
 1;
@@ -147,10 +164,9 @@ Ji-Hyeon Gim E<lt>potatogim@gluesys.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2017 by Ji-Hyeon Gim.
+This software is copyright 2017-2018 by Ji-Hyeon Gim.
 
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it under the same terms as the GPLv2/LGPLv3.
 
 =cut
 

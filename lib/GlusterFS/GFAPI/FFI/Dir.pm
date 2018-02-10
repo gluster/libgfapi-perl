@@ -3,7 +3,7 @@ package GlusterFS::GFAPI::FFI::Dir;
 BEGIN
 {
     our $AUTHOR  = 'cpan:potatogim';
-    our $VERSION = '0.01';
+    our $VERSION = '0.3';
 }
 
 use strict;
@@ -19,9 +19,14 @@ use Carp;
 #---------------------------------------------------------------------------
 #   Attributes
 #---------------------------------------------------------------------------
-has 'fd' =>
+has 'api' =>
 (
     is => 'rwp',
+);
+
+has 'fd' =>
+(
+    is => 'rw',
 );
 
 has 'readdirplus' =>
@@ -36,16 +41,35 @@ has 'cursor' =>
 
 
 #---------------------------------------------------------------------------
-#   Methods
+#   Contructor/Destructor
 #---------------------------------------------------------------------------
 sub BUILD
 {
     my $self = shift;
     my $args = shift;
 
+    $self->_set_api($args->{api});
+    $self->fd($args->{fd});
+    $self->readdirplus($args->{readdirplus} // 0);
     $self->_set_cursor(GlusterFS::GFAPI::FFI::Dirent->new());
 }
 
+sub DEMOLISH
+{
+    my ($self, $is_global) = @_;
+
+    if (GlusterFS::GFAPI::FFI::glfs_closedir($self->fd))
+    {
+        confess($!);
+    }
+
+    $self->_set_api(undef);
+}
+
+
+#---------------------------------------------------------------------------
+#   Methods
+#---------------------------------------------------------------------------
 sub next
 {
     my $self = shift;
@@ -59,11 +83,11 @@ sub next
     if ($self->readdirplus)
     {
         $stat = GlusterFS::GFAPI::FFI::Stat->new();
-        $ret  = glfs_readdirplus_r($self->fd, $stat, $entry, $self->cursor);
+        $ret  = glfs_readdirplus_r($self->fd, $stat, $entry, \$self->cursor);
     }
     else
     {
-        $ret = glfs_readdir_r($self->fd, $entry, $self->cursor);
+        $ret = GlusterFS::GFAPI::FFI::glfs_readdir_r($self->fd, $entry, \$self->cursor);
     }
 
     if ($ret != 0)
@@ -71,22 +95,13 @@ sub next
         confess($!);
     }
 
-    if (!defined($self->cursor) || !defined($self->cursor->contents))
+    #if (!defined($self->cursor) || !defined($self->cursor->contents))
+    if (!defined($self->cursor))
     {
         confess('StopIteration');
     }
 
     return $self->readdirplus ? ($entry, $stat) : $entry;
-}
-
-sub DEMOLISH
-{
-    my ($self, $is_global) = @_;
-
-    if (glfs_closedir($self->fd))
-    {
-        confess($!);
-    }
 }
 
 1;
@@ -113,10 +128,9 @@ Ji-Hyeon Gim E<lt>potatogim@gluesys.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2017 by Ji-Hyeon Gim.
+This software is copyright 2017-2018 by Ji-Hyeon Gim.
 
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it under the same terms as the GPLv2/LGPLv3.
 
 =cut
 
