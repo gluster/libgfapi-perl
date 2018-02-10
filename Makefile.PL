@@ -8,7 +8,6 @@ WriteMakefile(
     AUTHOR             => 'Ji-Hyeon Gim <potatogim@gluesys.com>',
     VERSION_FROM       => 'lib/GlusterFS/GFAPI/FFI.pm',
     ABSTRACT_FROM      => 'lib/GlusterFS/GFAPI/FFI.pm',
-    LICENSE            => 'unknown',
     CONFIGURE_REQUIRES => {
         'ExtUtils::MakeMaker' => 0,
     },
@@ -51,10 +50,6 @@ WriteMakefile(
         'Test::Exception' => 0.43,
     },
     PL_FILES => {},
-    dist => {
-        COMPRESS => 'gzip -9f',
-        SUFFIX   => 'gz',
-    },
     clean => {
         FILES => 'GlusterFS-GFAPI-FFI-*',
     },
@@ -65,7 +60,11 @@ WriteMakefile(
         eval { ExtUtils::MakeMaker->VERSION(6.46) }
             ? (
                 META_MERGE => {
+                    homepage => 'https://github.com/gluster/libgfapi-perl',
                     'meta-spec' => { version => 2 },
+                    bugtracker => {
+                        web => 'https://github.com/gluster/libgfapi-perl/issues',
+                    },
                     resources   => {
                         type => 'git',
                         url  => 'https://github.com/gluster/libgfapi-perl.git',
