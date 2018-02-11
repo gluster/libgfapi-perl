@@ -1,3 +1,8 @@
+0.4
+
+    - provides convenient classes under GlusterFS::GFAPI::FFI::*
+    - unit-test with mocking up
+
 0.3
 
     - supports scatter/gather I/O
