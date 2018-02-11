@@ -11,9 +11,10 @@ use warnings;
 use utf8;
 
 use Moo;
+use Fcntl   qw/:mode/;
+use Carp;
 use GlusterFS::GFAPI::FFI;
 use GlusterFS::GFAPI::FFI::Util qw/libgfapi_soname/;
-use Carp;
 
 use overload '""' => 'stringify';
 
@@ -31,14 +32,16 @@ has 'vol' =>
     is => 'rwp',
 );
 
-has 'lstat' =>
+has '_lstat' =>
 (
-    is => 'rwp',
+    is     => 'ro',
+    writer => '_set_lstat',
 );
 
-has 'stat' =>
+has '_stat' =>
 (
-    is => 'rwp',
+    is     => 'ro',
+    writer => '_set_stat',
 );
 
 has 'path' =>
@@ -59,8 +62,13 @@ sub BUILD
     $self->_set_vol($args->{vol});
     $self->_set_lstat($args->{lstat});
     $self->_set_stat(undef);
-    $self->_set_path(join('/', $args->{name}));
+    $self->_set_path(join('/', $args->{path}, $args->{name}));
 }
+
+#sub DEMOLISH
+#{
+#    my ($self, $is_global) = @_;
+#}
 
 
 #---------------------------------------------------------------------------
@@ -73,7 +81,7 @@ sub stat
 
     if ($args{follow_symlinks})
     {
-        if (!defined($self->stat))
+        if (!defined($self->_stat))
         {
             if ($self->is_symlink)
             {
@@ -81,14 +89,14 @@ sub stat
             }
             else
             {
-                $self->_set_stat($self->lstat);
+                $self->_set_stat($self->_lstat);
             }
         }
 
-        return $self->stat;
+        return $self->_stat;
     }
 
-    return $self->lstat;
+    return $self->_lstat;
 }
 
 sub is_dir
@@ -101,7 +109,7 @@ sub is_dir
         return S_ISDIR($self->stat(follow_symlinks => 1)->st_mode);
     }
 
-    return S_ISDIR($self->lstat->st_mode);
+    return S_ISDIR($self->_lstat->st_mode);
 }
 
 sub is_file
@@ -111,10 +119,10 @@ sub is_file
 
     if ($args{follow_symlinks} && $self->is_symlink())
     {
-        return S_ISREG($self->stat(follow_symlinks => 1)->st_mode);
+        return S_ISREG($self->_stat(follow_symlinks => 1)->st_mode);
     }
 
-    return S_ISREG($self->lstat->st_mode);
+    return S_ISREG($self->_lstat->st_mode);
 }
 
 sub is_symlink
@@ -122,7 +130,7 @@ sub is_symlink
     my $self = shift;
     my %args = @_;
 
-    return S_ISLNK($self->lstat->st_mode);
+    return S_ISLNK($self->_lstat->st_mode);
 }
 
 sub inode
@@ -130,7 +138,7 @@ sub inode
     my $self = shift;
     my %args = @_;
 
-    return $self->lstat->st_ino;
+    return $self->_lstat->st_ino;
 }
 
 sub stringify

@@ -1,6 +1,6 @@
 package TestDir;
 
-use base qw/Test Test::Class/;
+use parent 'Test', 'Test::Class';
 
 use Test::Most;
 use GlusterFS::GFAPI::FFI;
@@ -9,8 +9,6 @@ use GlusterFS::GFAPI::FFI::Dir;
 sub setup : Test(setup)
 {
     my $self = shift;
-
-    diag("setup");
 
     $self->{_saved_glfs_closedir} = \&GlusterFS::GFAPI::FFI::glfs_closedir;
 
@@ -22,8 +20,6 @@ sub setup : Test(setup)
 sub teardown : Test(teardown)
 {
     my $self = shift;
-
-    diag("teardown");
 
     no warnings 'redefine';
 
@@ -51,10 +47,10 @@ sub test_next_success : Test(2)
 
     ${GlusterFS::GFAPI::FFI::}{glfs_readdir_r} = $mock_glfs_readdir_r;
 
-    my $fd  = GlusterFS::GFAPI::FFI::Dir->new(fd => 2);
-    my $ent = $fd->next();
+    my $fd    = GlusterFS::GFAPI::FFI::Dir->new(fd => 2);
+    my $entry = $fd->next();
 
-    isa_ok($ent, 'GlusterFS::GFAPI::FFI::Dirent');
+    isa_ok($entry, 'GlusterFS::GFAPI::FFI::Dirent');
 
     ${GlusterFS::GFAPI::FFI::}{glfs_readdir_r} = $old;
 }

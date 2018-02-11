@@ -21,8 +21,8 @@ BEGIN
 use lib "$ROOTDIR/lib", "$ROOTDIR/t/lib";
 
 use TestFile;
-use TestDir;
-use TestVolume;
+#use TestDir;
+#use TestVolume;
 
 Test::Class->runtests;
 
