@@ -7,8 +7,6 @@ use utf8;
 use POSIX           qw/:fcntl_h/;
 use Scalar::Util    qw/weaken/;
 use Test::Most;
-use Data::Dumper;
-use Devel::Peek;
 
 use FFI::Platypus;
 use FFI::Platypus::Buffer;
@@ -20,7 +18,7 @@ use constant
     S_IFIFO => 0010000,
 };
 
-diag('00-basic.t');
+diag('00-api.t');
 
 use_ok('GlusterFS::GFAPI::FFI');
 
