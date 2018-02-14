@@ -2513,9 +2513,6 @@ sub test_copytree_success : Test(no_plan)
             , 'makedirs() called 1 + 3 times');
 
     # Assert that copystat() was called on source and destination dir
-    use Data::Dumper;
-    print Dumper($mock_info{copystat});
-
     my $called = 0;
     my $index  = 0;
 

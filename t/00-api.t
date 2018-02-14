@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use utf8;
 
+use Env;
 use POSIX           qw/:fcntl_h/;
 use Scalar::Util    qw/weaken/;
 use Test::Most;
@@ -19,6 +20,11 @@ use constant
 };
 
 diag('00-api.t');
+
+if (!$ENV{TEST_FUNCTION})
+{
+    plan(skip_all => 'TEST_FUNCTION not enabled so it will be skipped');
+}
 
 use_ok('GlusterFS::GFAPI::FFI');
 
