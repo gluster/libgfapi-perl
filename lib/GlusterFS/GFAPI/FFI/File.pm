@@ -3,7 +3,7 @@ package GlusterFS::GFAPI::FFI::File;
 BEGIN
 {
     our $AUTHOR  = 'cpan:potatogim';
-    our $VERSION = '0.3';
+    our $VERSION = '0.4';
 }
 
 use strict;
@@ -132,7 +132,11 @@ sub discard
 
     if ($retval < 0)
     {
-        confess($!);
+        confess(sprintf('glfs_discard(%s, %d, %d) failed: %s'
+                    , $self->fd
+                    , $args{offset}
+                    , $args{length}
+                    , $!));
     }
 
     return $retval;
@@ -162,7 +166,12 @@ sub fallocate
 
     if ($retval < 0)
     {
-        confess($!);
+        confess(sprintf('glfs_fallocate(%s, %s, %s, %s) failed: %s'
+                , $self->fd
+                , $args{mode} ? sprintf('0%o', $args{mode}) : '0'
+                , $args{offset}
+                , $args{length}
+                , $!));
     }
 
     return $retval;
@@ -177,7 +186,10 @@ sub fchmod
 
     if ($retval < 0)
     {
-        confess($!);
+        confess(sprintf("glfs_fchmod(%s, %s) failed: %s"
+                    , $self->fd
+                    , $args{mode} ? sprintf('0%o', $args{mode}) : '0'
+                    , $!));
     }
 
     return $retval;
@@ -192,7 +204,7 @@ sub fchown
 
     if ($retval < 0)
     {
-        confess($!);
+        confess("glfs_fchown(${\$self->fd}, $args{uid}, $args{gid}) failed: $!");
     }
 
     return $retval;
@@ -207,7 +219,7 @@ sub fdatasync
 
     if ($retval < 0)
     {
-        confess($!);
+        confess("glfs_fdatasync(${\$self->fd}) failed: $!");
     }
 
     return $retval;
@@ -333,7 +345,7 @@ sub fstat
 
     if ($retval < 0)
     {
-        confess($!);
+        confess("glfs_fstat(${\$self->fd}, $stat) failed: $!");
     }
 
     return $stat;
@@ -344,11 +356,11 @@ sub fsync
     my $self = shift;
     my %args = @_;
 
-    my $retval = GlusterFS::GFAPI::FFI::glfs_sync($self->fd);
+    my $retval = GlusterFS::GFAPI::FFI::glfs_fsync($self->fd);
 
     if ($retval < 0)
     {
-        confess($!);
+        confess("glfs_fsync(${\$self->fd}) failed: $!");
     }
 
     return $retval;
@@ -410,7 +422,7 @@ sub read
     }
     elsif ($retval < 0)
     {
-        confess($!);
+        confess("glfs_read(${\$self->fd}, \$buf, $args{size}, 0) failed: $!");
     }
 
     return $retval;
@@ -430,7 +442,11 @@ sub readinto
 
     if ($retval < 0)
     {
-        confess($!);
+        confess(sprintf('glfs_read(%s, %s, %d, 0) failed: %s'
+                    , $self->fd
+                    , '$buf'
+                    , length($args{buf})
+                    , 0));
     }
 
     return $retval;
@@ -452,7 +468,12 @@ sub write
 
     if ($retval < 0)
     {
-        confess($!);
+        confess(sprintf('glfs_write(%s, %s, %d, %s) failed: %s'
+                    , $self->fd
+                    , '$buf'
+                    , length($args{data})
+                    , !$args{flags} ? '0' : sprintf('0%o', $args{flags})
+                    , $!));
     }
 
     return $retval;

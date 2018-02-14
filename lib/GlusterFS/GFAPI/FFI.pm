@@ -168,7 +168,7 @@ package GlusterFS::GFAPI::FFI;
 BEGIN
 {
     our $AUTHOR  = 'cpan:potatogim';
-    our $VERSION = '0.3';
+    our $VERSION = '0.4';
 }
 
 use strict;
@@ -450,7 +450,7 @@ GlusterFS::GFAPI::FFI - FFI Perl binding for GlusterFS libgfapi
 
 =head1 VERSION
 
-0.3
+0.4
 
 =head1 SYNOPSIS
 
@@ -561,211 +561,391 @@ GlusterFS::GFAPI::FFI - FFI Perl binding for GlusterFS libgfapi
 
 =head1 FUNCTIONS
 
-=head2 C<$retval = glfs_init($fs)>
+=head2 C<glfs_init($fs)>
 
-=head2 C<$fs = glfs_new($volname)>
+    $retval = glfs_init($fs);
 
-=head2 C<$retval = glfs_set_volfile_server($fs, $proto, $node, $port)>
+=head2 C<glfs_new($volname)>
 
-=head2 C<$retval = glfs_set_logging($fs, $path, $level)>
+    $fs = glfs_new($volname);
 
-=head2 C<$retval = glfs_fini($fs)>
+=head2 C<glfs_set_volfile_server($fs, $proto, $node, $port)>
 
-=head2 C<$volid = glfs_get_volumeid($fs, $buf, $bufsz)>
+    $retval = glfs_set_volfile_server($fs, $proto, $node, $port);
 
-=head2 C<$retval = glfs_setfsuid($uid)>
+=head2 C<glfs_set_logging($fs, $path, $level)>
 
-=head2 C<$retval = glfs_setfsgid($uid)>
+    $retval = glfs_set_logging($fs, $path, $level);
 
-=head2 C<$retval = glfs_setfsgroups($uid, $gids)>
+=head2 C<glfs_fini($fs)>
 
-=head2 C<$fd = glfs_open($fs, $path, $flags)>
+    $retval = glfs_fini($fs);
 
-=head2 C<$fd = glfs_creat($fs, $path, $flags, $mode)>
+=head2 C<glfs_get_volumeid($fs, $buf, $bufsz)>
 
-=head2 C<$retval = glfs_close($fd)>
+    $volid = glfs_get_volumeid($fs, $buf, $bufsz);
 
-=head2 C<$fs = glfs_from_glfd($fd)>
+=head2 C<glfs_setfsuid($uid)>
 
-=head2 C<$retval = glfs_set_xlator_option($fs, $xlator, $key, $value)>
+    $retval = glfs_setfsuid($uid);
 
-=head2 C<$retval = glfs_read($fd, $buf, $count, $flags)>
+=head2 C<glfs_setfsgid($uid)>
 
-=head2 C<$retval = glfs_write($fd, $buf, $count, $flags)>
+    $retval = glfs_setfsgid($uid);
 
-=head2 C<($retval, @data) = glfs_readv($fd, [$buf1, ...], $flags)>
+=head2 C<glfs_setfsgroups($uid, $gids)>
 
-=head2 C<$retval = glfs_writev($fd, [$buf1, ...], $flags)>
+    $retval = glfs_setfsgroups($uid, $gids);
 
-=head2 C<$retval = glfs_pread($fd, $buf, $count, $offset, $flags)>
+=head2 C<glfs_open($fs, $path, $flags)>
 
-=head2 C<$retval = glfs_pwrite($fd, $buf, $count, $offset, $flags)>
+    $fd = glfs_open($fs, $path, $flags);
 
-=head2 C<($retval, @data) = glfs_preadv($fd, [$buf1, ...], $offset, $flags)>
+=head2 C<glfs_creat($fs, $path, $flags, $mode)>
 
-=head2 C<$retval = glfs_pwritev($fd, [$buf1, ...], $offset, $flags)>
+    $fd = glfs_creat($fs, $path, $flags, $mode);
 
-=head2 C<$retval = glfs_lseek($fd, $offset, $whence)>
+=head2 C<glfs_close($fd)>
 
-=head2 C<$retval = glfs_truncate($fs, $path, $length)>
+    $retval = glfs_close($fd);
 
-=head2 C<$retval = glfs_ftruncate($fd, $length)>
+=head2 C<glfs_from_glfd($fd)>
 
-=head2 C<$retval = glfs_lstat($fs, $path, $stat)>
+    $fs = glfs_from_glfd($fd);
 
-=head2 C<$retval = glfs_stat($fs, $path, $stat)>
+=head2 C<glfs_set_xlator_option($fs, $xlator, $key, $value)>
 
-=head2 C<$retval = glfs_fstat($fd, $stat)>
+    $retval = glfs_set_xlator_option($fs, $xlator, $key, $value);
 
-=head2 C<$retval = glfs_fsync($fd)>
+=head2 C<glfs_read($fd, $buf, $count, $flags)>
 
-=head2 C<$retval = glfs_fdatasync($fd)>
+    $retval = glfs_read($fd, $buf, $count, $flags);
 
-=head2 C<$retval = glfs_access($fs, $path, $mode)>
+=head2 C<glfs_write($fd, $buf, $count, $flags)>
 
-=head2 C<$retval = glfs_symlink($fs, $oldpath, $newpath)>
+    $retval = glfs_write($fd, $buf, $count, $flags);
 
-=head2 C<$retval = glfs_readlink($fs, $path, $buf, $bufsz)>
+=head2 C<glfs_readv($fd, [$buf1, ...], $flags)>
 
-=head2 C<$retval = glfs_mknod($fs, $path, $mode, $dev)>
+    ($retval, @data) = glfs_readv($fd, [$buf1, ...], $flags);
 
-=head2 C<$retval = glfs_mkdir($fs, $path, $mode)>
+=head2 C<glfs_writev($fd, [$buf1, ...], $flags)>
 
-=head2 C<$retval = glfs_unlink($fs, $path)>
+    $retval = glfs_writev($fd, [$buf1, ...], $flags);
 
-=head2 C<$retval = glfs_rmdir($fs, $path)>
+=head2 C<glfs_pread($fd, $buf, $count, $offset, $flags)>
 
-=head2 C<$retval = glfs_rename($fs, $oldpath, $newpath)>
+    $retval = glfs_pread($fd, $buf, $count, $offset, $flags);
 
-=head2 C<$retval = glfs_link($fs, $oldpath, $newpath)>
+=head2 C<glfs_pwrite($fd, $buf, $count, $offset, $flags)>
 
-=head2 C<$retval = glfs_opendir($fs, $path)>
+    $retval = glfs_pwrite($fd, $buf, $count, $offset, $flags);
 
-=head2 C<$retval = glfs_readdir_r($fd, $dirent, \$result)>
+=head2 C<glfs_preadv($fd, [$buf1, ...], $offset, $flags)>
 
-=head2 C<$retval = glfs_readdirplus_r($fd, $stat, $dirent, \$result)>
+    ($retval, @data) = glfs_preadv($fd, [$buf1, ...], $offset, $flags);
 
-=head2 C<$dirent = glfs_readdir($fd)>
+=head2 C<glfs_pwritev($fd, [$buf1, ...], $offset, $flags)>
 
-=head2 C<$dirent = glfs_readdirplus($fd, $stat)>
+    $retval = glfs_pwritev($fd, [$buf1, ...], $offset, $flags);
 
-=head2 C<$retval = glfs_telldir($fd)>
+=head2 C<glfs_lseek($fd, $offset, $whence)>
 
-=head2 C<$retval = glfs_seekdir($fd, $offset)>
+    $retval = glfs_lseek($fd, $offset, $whence);
 
-=head2 C<$retval = glfs_closedir($fd)>
+=head2 C<glfs_truncate($fs, $path, $length)>
 
-=head2 C<$retval = glfs_statvfs($fs, $path, $statvfs)>
+    $retval = glfs_truncate($fs, $path, $length);
 
-=head2 C<$retval = glfs_chmod($fs, $path, $mode)>
+=head2 C<glfs_ftruncate($fd, $length)>
 
-=head2 C<$retval = glfs_fchmod($fd, $mode)>
+    $retval = glfs_ftruncate($fd, $length);
 
-=head2 C<$retval = glfs_chown($fs, $path, $uid, $gid)>
+=head2 C<glfs_lstat($fs, $path, $stat)>
 
-=head2 C<$retval = glfs_lchown($fs, $path, $uid, $gid)>
+    $retval = glfs_lstat($fs, $path, $stat);
 
-=head2 C<$retval = glfs_fchown($fd, $uid, $gid)>
+=head2 C<glfs_stat($fs, $path, $stat)>
 
-=head2 C<$retval = glfs_utimens($fs, $path, $timespecs)>
+    $retval = glfs_stat($fs, $path, $stat);
 
-=head2 C<$retval = glfs_ltimens($fs, $path, $timespecs)>
+=head2 C<glfs_fstat($fd, $stat)>
 
-=head2 C<$retval = glfs_ftimens($fd, $timespecs)>
+    $retval = glfs_fstat($fd, $stat);
 
-=head2 C<$retval = glfs_getxattr($fs, $path, $key, $value, $valsz)>
+=head2 C<glfs_fsync($fd)>
 
-=head2 C<$retval = glfs_lgetxattr($fs, $path, $key, $value, $valsz)>
+    $retval = glfs_fsync($fd);
 
-=head2 C<$retval = glfs_lgetxattr($fd, $key, $value, $valsz)>
+=head2 C<glfs_fdatasync($fd)>
 
-=head2 C<$retval = glfs_listxattr($fs, $path, $value, $valsz)>
+    $retval = glfs_fdatasync($fd);
 
-=head2 C<$retval = glfs_llistxattr($fs, $path, $value, $valsz)>
+=head2 C<glfs_access($fs, $path, $mode)>
 
-=head2 C<$retval = glfs_flistxattr($fd, $value, $valsz)>
+    $retval = glfs_access($fs, $path, $mode);
 
-=head2 C<$retval = glfs_setxattr($fs, $path, $key, $value, $valsz, $flags)>
+=head2 C<glfs_symlink($fs, $oldpath, $newpath)>
 
-=head2 C<$retval = glfs_lsetxattr($fs, $path, $key, $value, $valsz, $flags)>
+    $retval = glfs_symlink($fs, $oldpath, $newpath);
 
-=head2 C<$retval = glfs_fsetxattr($fd, $key, $value, $valsz, $flags)>
+=head2 C<glfs_readlink($fs, $path, $buf, $bufsz)>
 
-=head2 C<$retval = glfs_removexttr($fd, $path, $key)>
+    $retval = glfs_readlink($fs, $path, $buf, $bufsz);
 
-=head2 C<$retval = glfs_lremovexttr($fd, $path, $key)>
+=head2 C<glfs_mknod($fs, $path, $mode, $dev)>
 
-=head2 C<$retval = glfs_fremovexttr($fs, $key)>
+    $retval = glfs_mknod($fs, $path, $mode, $dev);
 
-=head2 C<$retval = glfs_fallocate($fd, $keepsz, $offset, $len)>
+=head2 C<glfs_mkdir($fs, $path, $mode)>
 
-=head2 C<$retval = glfs_discard($fd, $offset, $len)>
+    $retval = glfs_mkdir($fs, $path, $mode);
 
-=head2 C<$retval = glfs_zerofill($fd, $offset, $len)>
+=head2 C<glfs_unlink($fs, $path)>
 
-=head2 C<$retval = glfs_getcwd($fs, $buf, $bufsz)>
+    $retval = glfs_unlink($fs, $path);
 
-=head2 C<$retval = glfs_chdir($fs, $path)>
+=head2 C<glfs_rmdir($fs, $path)>
 
-=head2 C<$retval = glfs_fchdir($fd)>
+    $retval = glfs_rmdir($fs, $path);
 
-=head2 C<$retval = glfs_realpath($fs, $path, $resolved)>
+=head2 C<glfs_rename($fs, $oldpath, $newpath)>
 
-=head2 C<$retval = glfs_posix_lock($fd, $cmd, $flock)>
+    $retval = glfs_rename($fs, $oldpath, $newpath);
 
-=head2 C<$fd = glfs_dup($fd)>
+=head2 C<glfs_link($fs, $oldpath, $newpath)>
 
-=head2 C<$retval = glfs_read_async($fd, $buf, $bufsz, $flags, $cbk, $data)>
+    $retval = glfs_link($fs, $oldpath, $newpath);
+
+=head2 C<glfs_opendir($fs, $path)>
+
+    $retval = glfs_opendir($fs, $path);
+
+=head2 C<glfs_readdir_r($fd, $dirent, \$result)>
+
+    $retval = glfs_readdir_r($fd, $dirent, \$result);
+
+=head2 C<glfs_readdirplus_r($fd, $stat, $dirent, \$result)>
+
+    $retval = glfs_readdirplus_r($fd, $stat, $dirent, \$result);
+
+=head2 C<glfs_readdir($fd)>
+
+    $dirent = glfs_readdir($fd);
+
+=head2 C<glfs_readdirplus($fd, $stat)>
+
+    $dirent = glfs_readdirplus($fd, $stat);
+
+=head2 C<glfs_telldir($fd)>
+
+    $retval = glfs_telldir($fd);
+
+=head2 C<glfs_seekdir($fd, $offset)>
+
+    $retval = glfs_seekdir($fd, $offset);
+
+=head2 C<glfs_closedir($fd)>
+
+    $retval = glfs_closedir($fd);
+
+=head2 C<glfs_statvfs($fs, $path, $statvfs)>
+
+    $retval = glfs_statvfs($fs, $path, $statvfs);
+
+=head2 C<glfs_chmod($fs, $path, $mode)>
+
+    $retval = glfs_chmod($fs, $path, $mode);
+
+=head2 C<glfs_fchmod($fd, $mode)>
+
+    $retval = glfs_fchmod($fd, $mode);
+
+=head2 C<glfs_chown($fs, $path, $uid, $gid)>
+
+    $retval = glfs_chown($fs, $path, $uid, $gid);
+
+=head2 C<glfs_lchown($fs, $path, $uid, $gid)>
+
+    $retval = glfs_lchown($fs, $path, $uid, $gid);
+
+=head2 C<glfs_fchown($fd, $uid, $gid)>
+
+    $retval = glfs_fchown($fd, $uid, $gid);
+
+=head2 C<glfs_utimens($fs, $path, $timespecs)>
+
+    $retval = glfs_utimens($fs, $path, $timespecs);
+
+=head2 C<glfs_ltimens($fs, $path, $timespecs)>
+
+    $retval = glfs_ltimens($fs, $path, $timespecs);
+
+=head2 C<glfs_ftimens($fd, $timespecs)>
+
+    $retval = glfs_ftimens($fd, $timespecs);
+
+=head2 C<glfs_getxattr($fs, $path, $key, $value, $valsz)>
+
+    $retval = glfs_getxattr($fs, $path, $key, $value, $valsz);
+
+=head2 C<glfs_lgetxattr($fs, $path, $key, $value, $valsz)>
+
+    $retval = glfs_lgetxattr($fs, $path, $key, $value, $valsz);
+
+=head2 C<glfs_lgetxattr($fd, $key, $value, $valsz)>
+
+    $retval = glfs_lgetxattr($fd, $key, $value, $valsz);
+
+=head2 C<glfs_listxattr($fs, $path, $value, $valsz)>
+
+    $retval = glfs_listxattr($fs, $path, $value, $valsz);
+
+=head2 C<glfs_llistxattr($fs, $path, $value, $valsz)>
+
+    $retval = glfs_llistxattr($fs, $path, $value, $valsz);
+
+=head2 C<glfs_flistxattr($fd, $value, $valsz)>
+
+    $retval = glfs_flistxattr($fd, $value, $valsz);
+
+=head2 C<glfs_setxattr($fs, $path, $key, $value, $valsz, $flags)>
+
+    $retval = glfs_setxattr($fs, $path, $key, $value, $valsz, $flags);
+
+=head2 C<glfs_lsetxattr($fs, $path, $key, $value, $valsz, $flags)>
+
+    $retval = glfs_lsetxattr($fs, $path, $key, $value, $valsz, $flags);
+
+=head2 C<glfs_fsetxattr($fd, $key, $value, $valsz, $flags)>
+
+    $retval = glfs_fsetxattr($fd, $key, $value, $valsz, $flags);
+
+=head2 C<glfs_removexttr($fd, $path, $key)>
+
+    $retval = glfs_removexttr($fd, $path, $key);
+
+=head2 C<glfs_lremovexttr($fd, $path, $key)>
+
+    $retval = glfs_lremovexttr($fd, $path, $key);
+
+=head2 C<glfs_fremovexttr($fs, $key)>
+
+    $retval = glfs_fremovexttr($fs, $key);
+
+=head2 C<glfs_fallocate($fd, $keepsz, $offset, $len)>
+
+    $retval = glfs_fallocate($fd, $keepsz, $offset, $len);
+
+=head2 C<glfs_discard($fd, $offset, $len)>
+
+    $retval = glfs_discard($fd, $offset, $len);
+
+=head2 C<glfs_zerofill($fd, $offset, $len)>
+
+    $retval = glfs_zerofill($fd, $offset, $len);
+
+=head2 C<glfs_getcwd($fs, $buf, $bufsz)>
+
+    $retval = glfs_getcwd($fs, $buf, $bufsz);
+
+=head2 C<glfs_chdir($fs, $path)>
+
+    $retval = glfs_chdir($fs, $path);
+
+=head2 C<glfs_fchdir($fd)>
+
+    $retval = glfs_fchdir($fd);
+
+=head2 C<glfs_realpath($fs, $path, $resolved)>
+
+    $retval = glfs_realpath($fs, $path, $resolved);
+
+=head2 C<glfs_posix_lock($fd, $cmd, $flock)>
+
+    $retval = glfs_posix_lock($fd, $cmd, $flock);
+
+=head2 C<glfs_dup($fd)>
+
+    $fd = glfs_dup($fd);
+
+=head2 C<glfs_read_async($fd, $buf, $bufsz, $flags, $cbk, $data)>
 
 B<This function is not supported yet!>
 
-=head2 C<$retval = glfs_write_async($fd, $buf, $bufsz, $flags, $cbk, $data)>
+    $retval = glfs_read_async($fd, $buf, $bufsz, $flags, $cbk, $data);
+
+=head2 C<glfs_write_async($fd, $buf, $bufsz, $flags, $cbk, $data)>
 
 B<This function is not supported yet!>
 
-=head2 C<$retval = glfs_readv_async($fd, [$buf1, ...], $flags, $cbk, $data)>
+    $retval = glfs_write_async($fd, $buf, $bufsz, $flags, $cbk, $data);
+
+=head2 C<glfs_readv_async($fd, [$buf1, ...], $flags, $cbk, $data)>
 
 B<This function is not supported yet!>
 
-=head2 C<$retval = glfs_writev_async($fd, [$buf1, ...], $flags, $cbk, $data)>
+    $retval = glfs_readv_async($fd, [$buf1, ...], $flags, $cbk, $data);
+
+=head2 C<glfs_writev_async($fd, [$buf1, ...], $flags, $cbk, $data)>
 
 B<This function is not supported yet!>
 
-=head2 C<$retval = glfs_pread_async($fd, $buf, $bufsz, $offset, flags, $cbk, $data)>
+    $retval = glfs_writev_async($fd, [$buf1, ...], $flags, $cbk, $data);
+
+=head2 C<glfs_pread_async($fd, $buf, $bufsz, $offset, flags, $cbk, $data)>
 
 B<This function is not supported yet!>
 
-=head2 C<$retval = glfs_pwrite_async($fd, $buf, $bufsz, $offset, flags, $cbk, $data)>
+    $retval = glfs_pread_async($fd, $buf, $bufsz, $offset, flags, $cbk, $data);
+
+=head2 C<glfs_pwrite_async($fd, $buf, $bufsz, $offset, flags, $cbk, $data)>
 
 B<This function is not supported yet!>
 
-=head2 C<$retval = glfs_preadv_async($fd, [$buf1, ...], $offset, $flags, $cbk, $data)>
+    $retval = glfs_pwrite_async($fd, $buf, $bufsz, $offset, flags, $cbk, $data);
+
+=head2 C<glfs_preadv_async($fd, [$buf1, ...], $offset, $flags, $cbk, $data)>
 
 B<This function is not supported yet!>
 
-=head2 C<$retval = glfs_pwritev_async($fd, [$buf1, ...], $offset, $flags, $cbk, $data)>
+    $retval = glfs_preadv_async($fd, [$buf1, ...], $offset, $flags, $cbk, $data);
+
+=head2 C<glfs_pwritev_async($fd, [$buf1, ...], $offset, $flags, $cbk, $data)>
 
 B<This function is not supported yet!>
 
-=head2 C<$retval = glfs_ftruncate_async($fd, $length, $cbk, $data)>
+    $retval = glfs_pwritev_async($fd, [$buf1, ...], $offset, $flags, $cbk, $data);
+
+=head2 C<glfs_ftruncate_async($fd, $length, $cbk, $data)>
 
 B<This function is not supported yet!>
 
-=head2 C<$retval = glfs_fsync_async($fd, $cbk, $data)>
+    $retval = glfs_ftruncate_async($fd, $length, $cbk, $data);
+
+=head2 C<glfs_fsync_async($fd, $cbk, $data)>
 
 B<This function is not supported yet!>
 
-=head2 C<$retval = glfs_fdatasync_async($fd, $cbk, $data)>
+    $retval = glfs_fsync_async($fd, $cbk, $data);
+
+=head2 C<glfs_fdatasync_async($fd, $cbk, $data)>
 
 B<This function is not supported yet!>
 
-=head2 C<$retval = glfs_discard_async($fd, $offset, $len, $cbk, $data)>
+    $retval = glfs_fdatasync_async($fd, $cbk, $data);
+
+=head2 C<glfs_discard_async($fd, $offset, $len, $cbk, $data)>
 
 B<This function is not supported yet!>
 
-=head2 C<$retval = glfs_zerofill_async($fd, $offset, $len, $cbk, $data)>
+    $retval = glfs_discard_async($fd, $offset, $len, $cbk, $data);
+
+=head2 C<glfs_zerofill_async($fd, $offset, $len, $cbk, $data)>
 
 B<This function is not supported yet!>
+
+    $retval = glfs_zerofill_async($fd, $offset, $len, $cbk, $data);
 
 =head1 BUGS
 
@@ -804,6 +984,14 @@ B<This function is not supported yet!>
 =head1 AUTHOR
 
 Ji-Hyeon Gim E<lt>potatogim@gluesys.comE<gt>
+
+=head2 CONTRIBUTORS
+
+=over
+
+=item Tae-Hwa Lee E<lt>alghost@gmail.comE<gt>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 

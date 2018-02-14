@@ -3,7 +3,7 @@ package GlusterFS::GFAPI::FFI::Dir;
 BEGIN
 {
     our $AUTHOR  = 'cpan:potatogim';
-    our $VERSION = '0.3';
+    our $VERSION = '0.4';
 }
 
 use strict;
@@ -58,7 +58,8 @@ sub DEMOLISH
 {
     my ($self, $is_global) = @_;
 
-    if (GlusterFS::GFAPI::FFI::glfs_closedir($self->fd))
+    if (defined($self->fd)
+        && GlusterFS::GFAPI::FFI::glfs_closedir($self->fd))
     {
         confess($!);
     }
@@ -98,7 +99,7 @@ sub next
     #if (!defined($self->cursor) || !defined($self->cursor->contents))
     if (!defined($self->cursor))
     {
-        confess('StopIteration');
+        return undef;
     }
 
     return $self->readdirplus ? ($entry, $stat) : $entry;
