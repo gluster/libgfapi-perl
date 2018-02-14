@@ -985,6 +985,14 @@ B<This function is not supported yet!>
 
 Ji-Hyeon Gim E<lt>potatogim@gluesys.comE<gt>
 
+=head2 CONTRIBUTORS
+
+=over
+
+=item Tae-Hwa Lee E<lt>alghost@gmail.comE<gt>
+
+=back
+
 =head1 COPYRIGHT AND LICENSE
 
 This software is copyright 2017-2018 by Ji-Hyeon Gim.
