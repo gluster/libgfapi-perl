@@ -168,7 +168,7 @@ package GlusterFS::GFAPI::FFI;
 BEGIN
 {
     our $AUTHOR  = 'cpan:potatogim';
-    our $VERSION = '0.3';
+    our $VERSION = '0.4';
 }
 
 use strict;
@@ -450,7 +450,7 @@ GlusterFS::GFAPI::FFI - FFI Perl binding for GlusterFS libgfapi
 
 =head1 VERSION
 
-0.3
+0.4
 
 =head1 SYNOPSIS
 

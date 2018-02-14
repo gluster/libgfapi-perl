@@ -4,7 +4,7 @@
 
 Name:           perl-glusterfs-api
 Summary:        Perl bindings for GlusterFS libgfapi
-Version:        0.3
+Version:        0.4
 Release:        1%{?dist}
 License:        GPLv2 or LGPLv3+
 Group:          System Environment/Libraries
