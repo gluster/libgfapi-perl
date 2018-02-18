@@ -989,7 +989,7 @@ Ji-Hyeon Gim E<lt>potatogim@gluesys.comE<gt>
 
 =over
 
-=item Tae-Hwa Lee E<lt>alghost@gmail.comE<gt>
+=item Tae-Hwa Lee E<lt>alghost.lee@gmail.comE<gt>
 
 =back
 

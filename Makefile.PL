@@ -61,18 +61,24 @@ WriteMakefile(
         eval { ExtUtils::MakeMaker->VERSION(6.46) }
             ? (
                 META_MERGE => {
-                    homepage => 'https://github.com/gluster/libgfapi-perl',
                     'meta-spec' => { version => 2 },
-                    bugtracker => {
-                        web => 'https://github.com/gluster/libgfapi-perl/issues',
-                    },
+                    license     => ['gpl_2', 'lgpl_3_0'],
                     resources   => {
-                        type => 'git',
-                        url  => 'https://github.com/gluster/libgfapi-perl.git',
-                        web  => 'https://github.com/gluster/libgfapi-perl',
+                        homepage   => 'https://github.com/gluster/libgfapi-perl',
+                        repository => {
+                            type => 'git',
+                            url  => 'https://github.com/gluster/libgfapi-perl.git',
+                            web  => 'https://github.com/gluster/libgfapi-perl',
+                        },
+                        bugtracker => {
+                            web => 'https://github.com/gluster/libgfapi-perl/issues',
+                        },
                     },
-                    license => ['gpl_2', 'lgpl_3_0'],
-                })
+                    x_contributors => [
+                        'Tae-Hwa Lee <alghost.lee@gmail.com>'
+                    ],
+                }
+            )
             : ()
     ),
 );
