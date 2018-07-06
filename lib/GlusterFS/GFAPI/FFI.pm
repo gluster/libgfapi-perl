@@ -207,7 +207,7 @@ $FFI->type('(glfs_fd_t, ssize_t, opaque)->opaque', 'glfs_io_cbk');
 $FFI->attach_cast('cast_Dirent', 'opaque', 'Dirent');
 
 # Facilities
-$FFI->attach(glfs_init => ['glfs_t'], => 'int');
+$FFI->attach(glfs_init => ['glfs_t'] => 'int');
 $FFI->attach(glfs_new => ['string'] => 'glfs_t');
 $FFI->attach(glfs_set_volfile_server => ['glfs_t', 'string', 'string', 'int'] => 'int');
 $FFI->attach(glfs_set_logging => ['glfs_t', 'string', 'int'] => 'int');
