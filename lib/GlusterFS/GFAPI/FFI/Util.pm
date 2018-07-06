@@ -15,40 +15,22 @@ use Carp;
 use Sub::Exporter
         -setup =>
         {
-            exports => [qw/libgfapi_soname valid_so/],
+            exports => [qw/libgfapi_soname/],
         };
 
 sub libgfapi_soname
 {
     my %args = @_;
 
-    my @sonames = qw(libgfapi.so libgfapi.so.0 libgfapi.so.0.0.0);
+    my $ffi = FFI::Platypus->new()->find_lib(lib => 'gfapi');
+    my $lib = $ffi->{lib};
 
-    my $soname;
-
-    foreach my $so (@sonames)
+    if (!defined($lib) || @{$lib} == 0)
     {
-        if (valid_so($so))
-        {
-            $soname = $so;
-            last;
-        }
+        croak("Could not find libgfapi");
     }
 
-    if (!defined($soname))
-    {
-        croak("Could not find libgfapi: tried: ${\join(', ', @sonames)}");
-    }
-
-    return $soname;
-}
-
-sub valid_so
-{
-    my $so  = shift;
-    my $ffi = FFI::Platypus->new(lib => $so, ignore_not_found => 1);
-
-    return defined($ffi);
+    return $lib;
 }
 
 1;
