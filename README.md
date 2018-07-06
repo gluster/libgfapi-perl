@@ -165,7 +165,7 @@ libgfapi-perl does not support some asynchronous I/O functions that using closur
 
 
 
-- [Tiny::Try](https://metacpan.org/pod/Tiny::Try)
+- [Try::Tiny](https://metacpan.org/pod/Try::Tiny)
 
 
 
