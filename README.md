@@ -1,4 +1,4 @@
-# libgfapi-perl [![Build Status](https://travis-ci.org/potatogim/libgfapi-perl.svg?branch=master)](https://travis-ci.org/potatogim/libgfapi-perl)
+# libgfapi-perl [![Build Status](https://travis-ci.org/gluster/libgfapi-perl.svg?branch=master)](https://travis-ci.org/gluster/libgfapi-perl)
 
 GlusterFS libgfapi binding for Perl 5
 
