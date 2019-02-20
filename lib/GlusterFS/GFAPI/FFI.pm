@@ -991,11 +991,13 @@ Ji-Hyeon Gim E<lt>potatogim@gluesys.comE<gt>
 
 =item Tae-Hwa Lee E<lt>alghost.lee@gmail.comE<gt>
 
+=item Hyo-Chan Lee E<lt>hyochan.lee@gmail.comE<gt>
+
 =back
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright 2017-2018 by Ji-Hyeon Gim.
+This software is copyright 2017-2019 by Ji-Hyeon Gim.
 
 This is free software; you can redistribute it and/or modify it under the same terms as the GPLv2/LGPLv3.
 
