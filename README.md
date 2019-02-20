@@ -1,4 +1,10 @@
-# libgfapi-perl [![Build Status](https://travis-ci.org/gluster/libgfapi-perl.svg?branch=master)](https://travis-ci.org/gluster/libgfapi-perl)
+# libgfapi-perl
+
+[![Releases](https://img.shields.io/github/release/gluster/libgfapi-perl/all.svg?style=flat-square)](https://github.com/gluster/libgfapi-perl/releases)
+[![Build Status](https://travis-ci.org/gluster/libgfapi-perl.svg?branch=master)](https://travis-ci.org/gluster/libgfapi-perl)
+[![codecov.io](http://codecov.io/github/gluster/libgfapi-perl/coverage.svg?branch=master)](http://codecov.io/github/gluster/libgfapi-perl?branch=master)
+[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
 GlusterFS libgfapi binding for Perl 5
 
