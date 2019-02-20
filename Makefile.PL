@@ -28,6 +28,7 @@ WriteMakefile(
         'List::MoreUtils'        => 0,
         'Moo'                    => 0,
         'Generator::Object'      => 0,
+        'Sub::Exporter'          => 0,
         'FFI::Platypus'          => 0,
         'FFI::Platypus::Declare' => 0,
         'FFI::Platypus::Buffer'  => 0,
