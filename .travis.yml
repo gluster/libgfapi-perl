@@ -48,7 +48,13 @@ before_install:
 
 install:
     - cpanm --sudo --notest --skip-satisfied --installdeps .
+    - cpanm --sudo --notest --skip-satisfied Devel::Cover::Report::Codecov
 
 script:
     - perl Makefile.PL
-    - make && make test TEST_VERBOSE=1 TEST_FUNCTION=1
+    - make
+    - cover -delete
+    - TEST_VERBOSE=1 TEST_FUNCTION=1 HARNESS_PERL_SWITCHES="-MDevel::Cover=+ignore,^local/|^t/" prove -v -r t
+
+after_success:
+    - cover -report codecov
