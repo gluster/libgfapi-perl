@@ -1,3 +1,9 @@
+0.5
+
+    - fix a way to find libgfapi
+    - exception handling for custom "ssize_t" type
+    - add eelhc as a contributor and update copyright
+
 0.4
 
     - provides convenient classes under GlusterFS::GFAPI::FFI::*
