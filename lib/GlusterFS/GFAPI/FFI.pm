@@ -187,7 +187,12 @@ use Carp;
 our $FFI = FFI::Platypus->new(lib => libgfapi_soname());
 
 # Custom type
-$FFI->type('int'        => 'ssize_t');
+if (int(substr($FFI::Platypus::VERSION, 2, 2)) < 72)
+{
+    # FFI::Platypus provides 'ssize_t' by default from 0.72_01 version.
+    $FFI->type('int' => 'ssize_t');
+}
+
 $FFI->type('record(16)' => 'uuid_t');
 $FFI->type('opaque'     => 'glfs_t');
 $FFI->type('opaque'     => 'glfs_fd_t');
