@@ -200,10 +200,11 @@ Author: Ji-Hyeon Gim ([@potatogim](https://github.com/potatogim))
 Contributors
 
 - Tae-Hwa Lee ([@alghost](https://github.com/alghost))
+- Hyo-Chan Lee ([@eelhc](https://github.com/eelhc))
 
 ## COPYRIGHT AND LICENSE
 
-This software is copyright 2017-2018 by Ji-Hyeon Gim.
+This software is copyright 2017-2019 by Ji-Hyeon Gim.
 
 This is free software; you can redistribute it and/or modify it under the same terms as the GPLv2/LGPLv3.
 
